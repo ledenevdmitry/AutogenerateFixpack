@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutogenerateFixpack", "AutogenerateFixpack\AutogenerateFixpack.csproj", "{7AF872D0-D7A8-41D9-B18C-31E8E1F13EE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7AF872D0-D7A8-41D9-B18C-31E8E1F13EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AF872D0-D7A8-41D9-B18C-31E8E1F13EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AF872D0-D7A8-41D9-B18C-31E8E1F13EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AF872D0-D7A8-41D9-B18C-31E8E1F13EE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {345CE98E-FB93-42B8-A4D0-BABE7801F0F4}
+	EndGlobalSection
+EndGlobal
