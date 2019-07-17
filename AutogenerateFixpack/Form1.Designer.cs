@@ -28,13 +28,45 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.LbScenario = new System.Windows.Forms.ListBox();
+            this.BtOpenFixpackFolder = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // LbScenario
+            // 
+            this.LbScenario.FormattingEnabled = true;
+            this.LbScenario.Location = new System.Drawing.Point(12, 58);
+            this.LbScenario.Name = "LbScenario";
+            this.LbScenario.Size = new System.Drawing.Size(208, 225);
+            this.LbScenario.TabIndex = 0;
+            // 
+            // BtOpenFixpackFolder
+            // 
+            this.BtOpenFixpackFolder.Location = new System.Drawing.Point(12, 12);
+            this.BtOpenFixpackFolder.Name = "BtOpenFixpackFolder";
+            this.BtOpenFixpackFolder.Size = new System.Drawing.Size(130, 23);
+            this.BtOpenFixpackFolder.TabIndex = 1;
+            this.BtOpenFixpackFolder.Text = "Открыть фикспак";
+            this.BtOpenFixpackFolder.UseVisualStyleBackColor = true;
+            this.BtOpenFixpackFolder.Click += new System.EventHandler(this.BtOpenFixpackFolder_Click);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(305, 295);
+            this.Controls.Add(this.BtOpenFixpackFolder);
+            this.Controls.Add(this.LbScenario);
+            this.Name = "Form1";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.ListBox LbScenario;
+        private System.Windows.Forms.Button BtOpenFixpackFolder;
     }
 }
 
