@@ -29,5 +29,10 @@ namespace AutogenerateFixpack
                 ReleaseNotesUtils.GenerateReleaseNotes(fixpackDirectory);
             }
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+
+        }
     }
 }

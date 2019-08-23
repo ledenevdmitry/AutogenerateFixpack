@@ -43,7 +43,13 @@ namespace AutogenerateFixpack
         {
             object objBookmark = "CREATE_DATE";
             admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = DateTime.Now.ToString("dd.MM.yyyy");
-        }        
+        }
+
+        private static void SetAdminName(Document admReleaseNotes)
+        {
+            object objBookmark = "ADMIN_NAME";
+            admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = Environment.UserName;
+        }
 
         private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes)
         {
@@ -54,6 +60,24 @@ namespace AutogenerateFixpack
                 object objBookmark = "PREREQUISITES";
                 admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text += prereqCell.Range.Text;                
             }
+        }    
+        
+        public static void SetBeforeInstruction(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        {
+            object objBookmark = "BEFORE_INSTRUCTIONS";
+            CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(226 + 0x100 * 239 + 0x10000 * 217), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(10, 1).Range);
+        }
+
+        public static void SetUninstall(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        {
+            object objBookmark = "UNINSTALL";
+            CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(255 + 0x100 * 242 + 0x10000 * 204), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(8, 1).Range);
+        }
+
+        public static void SetAfterInstruction(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        {
+            object objBookmark = "AFTER_INSTRUCTIONS";
+            CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(217 + 0x100 * 226 + 0x10000 * 243), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(12, 1).Range);
         }
 
         private static void CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
@@ -109,18 +133,22 @@ namespace AutogenerateFixpack
 
                 SetFixpackName(admReleaseNotes, fixpackDir);
                 SetDate(admReleaseNotes);
+                SetAdminName(admReleaseNotes);
 
-                object objBookmark = "BEFORE_INSTRUCTIONS";
                 foreach (DirectoryInfo subDir in fixpackDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
                 {
                     Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(subDir.FullName, "release_notes.docx"), System.Type.Missing, true);
-                    
-                    CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, WdColor.wdColorAqua, "Датафикс №", devReleaseNotes.Tables[1].Cell(10, 1).Range);
+
                     SetPrerequisites(admReleaseNotes, devReleaseNotes);
+                    SetBeforeInstruction(admReleaseNotes, devReleaseNotes, subDir);
+                    SetAfterInstruction(admReleaseNotes, devReleaseNotes, subDir);
+                    SetUninstall(admReleaseNotes, devReleaseNotes, subDir);
                 }
                 admReleaseNotes.Save();
             }
 
         }
+
+
     }
 }
