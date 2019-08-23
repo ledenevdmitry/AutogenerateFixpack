@@ -13,6 +13,7 @@ namespace AutogenerateFixpack
     {
         static Microsoft.Office.Interop.Word.Application wordApp;
 
+        /*
         private static void ReplaceWithStringValue(Document admReleaseNotes, string findWhat, string ReplaceWith)
         {
             object missing = System.Reflection.Missing.Value;
@@ -30,15 +31,18 @@ namespace AutogenerateFixpack
                 ref missing, ref missing, ref missing, ref missing, ref missing,
                 ref replaceAll, ref missing, ref missing, ref missing, ref missing);
         }
+        */
 
         private static void SetFixpackName(Document admReleaseNotes, DirectoryInfo fixpackDir)
         {
-            ReplaceWithStringValue(admReleaseNotes, "FIXPACK_NAME", fixpackDir.Name);
+            object objBookmark = "FIXPACK_NAME";
+            admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = fixpackDir.Name;
         }
 
-        private static void SetDate(Document admReleaseNotes, DirectoryInfo fixpackDir)
+        private static void SetDate(Document admReleaseNotes)
         {
-            ReplaceWithStringValue(admReleaseNotes, "CREATE_DATE", DateTime.Now.ToString("dd.MM.yyyy"));
+            object objBookmark = "CREATE_DATE";
+            admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = DateTime.Now.ToString("dd.MM.yyyy");
         }        
 
         private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes)
@@ -47,8 +51,8 @@ namespace AutogenerateFixpack
             string prereqText = prereqCell.Range.Text.Trim(new char[] { '\n', '\r', '\t' });
             if (!String.IsNullOrWhiteSpace(prereqText))
             {
-                ReplaceWithStringValue(admReleaseNotes, "PREREQUISITE",
-                    prereqCell.Range.Text + Environment.NewLine + "PREREQUISITE");
+                object objBookmark = "PREREQUISITES";
+                admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text += prereqCell.Range.Text;                
             }
         }
 
@@ -101,31 +105,17 @@ namespace AutogenerateFixpack
 
             if(result != DialogResult.Cancel)
             {
-                Document admReleaseNotes = wordApp.Documents.Open(releaseNotesFile.FullName, System.Type.Missing, true);
+                Document admReleaseNotes = wordApp.Documents.Open(releaseNotesFile.FullName, System.Type.Missing, false);
 
-                object objEndOfDoc = "\\endofdoc";
-                //CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objEndOfDoc).Range, WdColor.wdColorBlue);
+                SetFixpackName(admReleaseNotes, fixpackDir);
+                SetDate(admReleaseNotes);
+
+                object objBookmark = "BEFORE_INSTRUCTIONS";
                 foreach (DirectoryInfo subDir in fixpackDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
                 {
                     Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(subDir.FullName, "release_notes.docx"), System.Type.Missing, true);
-                    /*
-                    //var cell1 = doc.Tables[0].Cell(0, 0);
-                    var table = dev_release_notes.Tables[1];
-                    var cell2 = table.Cell(2, 1);
-                    var cell3 = table.Cell(6, 1);
-                    var cell4 = table.Cell(8, 1);
-                    var cell5 = table.Cell(10, 1);
-                    var cell6 = table.Cell(12, 1);
-                    var cell7 = table.Cell(14, 2);
-                    var cell8 = table.Cell(15, 2);
-                    var cell9 = table.Cell(16, 2);
-
-                    cell2.Range.Copy();
-                    */
-
-
-                    //adm_release_notes.Content.Paste();
-                    CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objEndOfDoc).Range, WdColor.wdColorLightBlue, "Датафикс №", devReleaseNotes.Tables[1].Cell(10, 1).Range);
+                    
+                    CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, WdColor.wdColorAqua, "Датафикс №", devReleaseNotes.Tables[1].Cell(10, 1).Range);
                     SetPrerequisites(admReleaseNotes, devReleaseNotes);
                 }
                 admReleaseNotes.Save();
