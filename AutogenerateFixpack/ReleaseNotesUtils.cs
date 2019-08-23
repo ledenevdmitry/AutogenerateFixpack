@@ -39,13 +39,42 @@ namespace AutogenerateFixpack
         private static void SetDate(Document admReleaseNotes, DirectoryInfo fixpackDir)
         {
             ReplaceWithStringValue(admReleaseNotes, "CREATE_DATE", DateTime.Now.ToString("dd.MM.yyyy"));
-        }
+        }        
 
-        private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes, bool isLast)
+        private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes)
         {
             var prereqCell = devReleaseNotes.Tables[1].Cell(6, 1);
-            ReplaceWithStringValue(admReleaseNotes, "PREREQUISITE",
-                prereqCell.Range.Text + (isLast ? "" : Environment.NewLine + "PREREQUISITE"));
+            string prereqText = prereqCell.Range.Text.Trim(new char[] { '\n', '\r', '\t' });
+            if (!String.IsNullOrWhiteSpace(prereqText))
+            {
+                ReplaceWithStringValue(admReleaseNotes, "PREREQUISITE",
+                    prereqCell.Range.Text + Environment.NewLine + "PREREQUISITE");
+            }
+        }
+
+        private static void CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
+        {
+            rangeWhere.Text = before;
+            var table = admReleaseNotes.Tables.Add(rangeWhere, 2, 1);
+
+            table.Cell(1, 1).Borders[WdBorderType.wdBorderTop].LineStyle = WdLineStyle.wdLineStyleSingle;
+            table.Cell(1, 1).Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+            table.Cell(1, 1).Borders[WdBorderType.wdBorderLeft].LineStyle = WdLineStyle.wdLineStyleSingle;
+            table.Cell(1, 1).Borders[WdBorderType.wdBorderRight].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            table.Cell(2, 1).Borders[WdBorderType.wdBorderTop].LineStyle = WdLineStyle.wdLineStyleSingle;
+            table.Cell(2, 1).Borders[WdBorderType.wdBorderBottom].LineStyle = WdLineStyle.wdLineStyleSingle;
+            table.Cell(2, 1).Borders[WdBorderType.wdBorderLeft].LineStyle = WdLineStyle.wdLineStyleSingle;
+            table.Cell(2, 1).Borders[WdBorderType.wdBorderRight].LineStyle = WdLineStyle.wdLineStyleSingle;
+
+            table.Shading.BackgroundPatternColor = color;
+            table.Cell(1, 1).Range.Text = before;
+
+            if(rangeToCopy != null)
+            {
+                rangeToCopy.Copy();
+                table.Cell(2, 1).Range.Paste();
+            }
         }
 
         public static void GenerateReleaseNotes(DirectoryInfo fixpackDir)
@@ -74,6 +103,8 @@ namespace AutogenerateFixpack
             {
                 Document admReleaseNotes = wordApp.Documents.Open(releaseNotesFile.FullName, System.Type.Missing, true);
 
+                object objEndOfDoc = "\\endofdoc";
+                //CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objEndOfDoc).Range, WdColor.wdColorBlue);
                 foreach (DirectoryInfo subDir in fixpackDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
                 {
                     Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(subDir.FullName, "release_notes.docx"), System.Type.Missing, true);
@@ -94,9 +125,10 @@ namespace AutogenerateFixpack
 
 
                     //adm_release_notes.Content.Paste();
-                    SetPrerequisites(admReleaseNotes, devReleaseNotes, true);
-                    admReleaseNotes.Save();
+                    CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objEndOfDoc).Range, WdColor.wdColorLightBlue, "Датафикс №", devReleaseNotes.Tables[1].Cell(10, 1).Range);
+                    SetPrerequisites(admReleaseNotes, devReleaseNotes);
                 }
+                admReleaseNotes.Save();
             }
 
         }
