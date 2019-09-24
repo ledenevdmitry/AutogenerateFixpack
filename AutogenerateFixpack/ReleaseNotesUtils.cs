@@ -11,7 +11,7 @@ namespace AutogenerateFixpack
 {
     class ReleaseNotesUtils
     {
-        static Microsoft.Office.Interop.Word.Application wordApp;
+        public static Microsoft.Office.Interop.Word.Application wordApp;
 
         /*
         private static void ReplaceWithStringValue(Document admReleaseNotes, string findWhat, string ReplaceWith)
@@ -82,7 +82,8 @@ namespace AutogenerateFixpack
 
         private static void CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
         {
-            rangeWhere.Text = before;
+            rangeWhere.InsertParagraphAfter();
+            rangeWhere = admReleaseNotes.Range(rangeWhere.End, rangeWhere.End);
             var table = admReleaseNotes.Tables.Add(rangeWhere, 2, 1);
 
             table.Cell(1, 1).Borders[WdBorderType.wdBorderTop].LineStyle = WdLineStyle.wdLineStyleSingle;
@@ -126,6 +127,10 @@ namespace AutogenerateFixpack
                     releaseNotesFileSEED.CopyTo(releaseNotesFile.FullName);
                 }
             }
+            else
+            {
+                releaseNotesFileSEED.CopyTo(releaseNotesFile.FullName);
+            }
 
             if(result != DialogResult.Cancel)
             {
@@ -135,7 +140,10 @@ namespace AutogenerateFixpack
                 SetDate(admReleaseNotes);
                 SetAdminName(admReleaseNotes);
 
-                foreach (DirectoryInfo subDir in fixpackDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+                List<DirectoryInfo> backwardSortedDirList = fixpackDir.GetDirectories().ToList();
+                backwardSortedDirList.Sort((x, y) => -x.Name.CompareTo(y.Name));
+
+                foreach (DirectoryInfo subDir in backwardSortedDirList)
                 {
                     Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(subDir.FullName, "release_notes.docx"), System.Type.Missing, true);
 
@@ -143,12 +151,15 @@ namespace AutogenerateFixpack
                     SetBeforeInstruction(admReleaseNotes, devReleaseNotes, subDir);
                     SetAfterInstruction(admReleaseNotes, devReleaseNotes, subDir);
                     SetUninstall(admReleaseNotes, devReleaseNotes, subDir);
+
+                    devReleaseNotes.Close();
                 }
                 admReleaseNotes.Save();
+                admReleaseNotes.Close();
             }
 
+            MessageBox.Show("Release Notes собран!", "Выполнено", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
-
 
     }
 }

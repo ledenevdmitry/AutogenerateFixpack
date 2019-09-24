@@ -22,17 +22,25 @@ namespace AutogenerateFixpack
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
+            if(!string.IsNullOrWhiteSpace(Properties.Settings.Default.fixpackPath))
+            {
+                fbd.SelectedPath = Properties.Settings.Default.fixpackPath;
+            }
+
             if(fbd.ShowDialog() == DialogResult.OK)
             {
                 DirectoryInfo fixpackDirectory = new DirectoryInfo(fbd.SelectedPath);
 
                 ReleaseNotesUtils.GenerateReleaseNotes(fixpackDirectory);
             }
+
+            Properties.Settings.Default.fixpackPath = fbd.SelectedPath;
+            Properties.Settings.Default.Save();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            ReleaseNotesUtils.wordApp.Quit();
         }
     }
 }
