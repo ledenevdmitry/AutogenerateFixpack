@@ -34,5 +34,17 @@ namespace AutogenerateFixpack.Properties {
                 this["fixpackPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string excelPath {
+            get {
+                return ((string)(this["excelPath"]));
+            }
+            set {
+                this["excelPath"] = value;
+            }
+        }
     }
 }
