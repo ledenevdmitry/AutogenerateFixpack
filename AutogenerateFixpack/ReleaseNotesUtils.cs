@@ -159,9 +159,9 @@ namespace AutogenerateFixpack
                 }
                 admReleaseNotes.Save();
                 admReleaseNotes.Close();
+                MessageBox.Show("Release Notes собран!", "Выполнено", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
 
-            MessageBox.Show("Release Notes собран!", "Выполнено", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
 
     }

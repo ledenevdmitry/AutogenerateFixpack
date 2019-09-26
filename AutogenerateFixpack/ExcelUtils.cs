@@ -55,6 +55,8 @@ namespace AutogenerateFixpack
             workbook.SaveAs(filename, XlFileFormat.xlOpenXMLWorkbook, Type.Missing, Type.Missing, true, false, XlSaveAsAccessMode.xlNoChange, XlSaveConflictResolution.xlLocalSessionChanges, Type.Missing, Type.Missing);
 
             workbook.Close();
+
+            MessageBox.Show("Эксель-файл собран");
         }
     }
 }

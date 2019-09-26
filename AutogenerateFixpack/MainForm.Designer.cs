@@ -36,11 +36,15 @@
             this.LbExcelFile = new System.Windows.Forms.Label();
             this.BtExcelFile = new System.Windows.Forms.Button();
             this.TbExcelFile = new System.Windows.Forms.TextBox();
+            this.LboxPatches = new System.Windows.Forms.ListBox();
+            this.CbScenario = new System.Windows.Forms.CheckBox();
+            this.CbRn = new System.Windows.Forms.CheckBox();
+            this.CbExcel = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // BtByFiles
             // 
-            this.BtByFiles.Location = new System.Drawing.Point(12, 67);
+            this.BtByFiles.Location = new System.Drawing.Point(206, 67);
             this.BtByFiles.Name = "BtByFiles";
             this.BtByFiles.Size = new System.Drawing.Size(134, 23);
             this.BtByFiles.TabIndex = 1;
@@ -50,7 +54,7 @@
             // 
             // BtByScenarios
             // 
-            this.BtByScenarios.Location = new System.Drawing.Point(152, 67);
+            this.BtByScenarios.Location = new System.Drawing.Point(346, 67);
             this.BtByScenarios.Name = "BtByScenarios";
             this.BtByScenarios.Size = new System.Drawing.Size(157, 23);
             this.BtByScenarios.TabIndex = 2;
@@ -62,12 +66,12 @@
             // 
             this.TbFPDir.Location = new System.Drawing.Point(128, 12);
             this.TbFPDir.Name = "TbFPDir";
-            this.TbFPDir.Size = new System.Drawing.Size(100, 20);
+            this.TbFPDir.Size = new System.Drawing.Size(294, 20);
             this.TbFPDir.TabIndex = 3;
             // 
             // BtFPDir
             // 
-            this.BtFPDir.Location = new System.Drawing.Point(234, 12);
+            this.BtFPDir.Location = new System.Drawing.Point(428, 12);
             this.BtFPDir.Name = "BtFPDir";
             this.BtFPDir.Size = new System.Drawing.Size(75, 23);
             this.BtFPDir.TabIndex = 4;
@@ -95,7 +99,7 @@
             // 
             // BtExcelFile
             // 
-            this.BtExcelFile.Location = new System.Drawing.Point(234, 41);
+            this.BtExcelFile.Location = new System.Drawing.Point(428, 41);
             this.BtExcelFile.Name = "BtExcelFile";
             this.BtExcelFile.Size = new System.Drawing.Size(75, 23);
             this.BtExcelFile.TabIndex = 7;
@@ -107,14 +111,63 @@
             // 
             this.TbExcelFile.Location = new System.Drawing.Point(128, 41);
             this.TbExcelFile.Name = "TbExcelFile";
-            this.TbExcelFile.Size = new System.Drawing.Size(100, 20);
+            this.TbExcelFile.Size = new System.Drawing.Size(294, 20);
             this.TbExcelFile.TabIndex = 6;
+            // 
+            // LboxPatches
+            // 
+            this.LboxPatches.FormattingEnabled = true;
+            this.LboxPatches.Location = new System.Drawing.Point(128, 101);
+            this.LboxPatches.Name = "LboxPatches";
+            this.LboxPatches.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.LboxPatches.Size = new System.Drawing.Size(363, 134);
+            this.LboxPatches.TabIndex = 9;
+            // 
+            // CbScenario
+            // 
+            this.CbScenario.AutoSize = true;
+            this.CbScenario.Checked = true;
+            this.CbScenario.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CbScenario.Location = new System.Drawing.Point(15, 102);
+            this.CbScenario.Name = "CbScenario";
+            this.CbScenario.Size = new System.Drawing.Size(106, 17);
+            this.CbScenario.TabIndex = 10;
+            this.CbScenario.Text = "Файл сценария";
+            this.CbScenario.UseVisualStyleBackColor = true;
+            // 
+            // CbRn
+            // 
+            this.CbRn.AutoSize = true;
+            this.CbRn.Checked = true;
+            this.CbRn.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CbRn.Location = new System.Drawing.Point(15, 125);
+            this.CbRn.Name = "CbRn";
+            this.CbRn.Size = new System.Drawing.Size(93, 17);
+            this.CbRn.TabIndex = 11;
+            this.CbRn.Text = "ReleaseNotes";
+            this.CbRn.UseVisualStyleBackColor = true;
+            // 
+            // CbExcel
+            // 
+            this.CbExcel.AutoSize = true;
+            this.CbExcel.Checked = true;
+            this.CbExcel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CbExcel.Location = new System.Drawing.Point(15, 148);
+            this.CbExcel.Name = "CbExcel";
+            this.CbExcel.Size = new System.Drawing.Size(75, 17);
+            this.CbExcel.TabIndex = 12;
+            this.CbExcel.Text = "Экселька";
+            this.CbExcel.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(321, 101);
+            this.ClientSize = new System.Drawing.Size(512, 247);
+            this.Controls.Add(this.CbExcel);
+            this.Controls.Add(this.CbRn);
+            this.Controls.Add(this.CbScenario);
+            this.Controls.Add(this.LboxPatches);
             this.Controls.Add(this.LbExcelFile);
             this.Controls.Add(this.BtExcelFile);
             this.Controls.Add(this.TbExcelFile);
@@ -126,6 +179,7 @@
             this.Name = "MainForm";
             this.Text = "Создание фикспака";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -140,6 +194,10 @@
         private System.Windows.Forms.Label LbExcelFile;
         private System.Windows.Forms.Button BtExcelFile;
         private System.Windows.Forms.TextBox TbExcelFile;
+        private System.Windows.Forms.ListBox LboxPatches;
+        private System.Windows.Forms.CheckBox CbScenario;
+        private System.Windows.Forms.CheckBox CbRn;
+        private System.Windows.Forms.CheckBox CbExcel;
     }
 }
 

@@ -28,7 +28,7 @@ namespace AutogenerateFixpack
             throw new Exception($"Неизвестный тип для файла {path}. Невозможно создать строку сценария");
         }
 
-        public static void CheckFilesAndPatchScenario(DirectoryInfo fixpackDirectory, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound)
+        public static void CheckFilesAndPatchScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound)
         {
             scenarioNotFound = new List<string>();
             filesNotFound = new List<string>();
@@ -36,62 +36,187 @@ namespace AutogenerateFixpack
 
             foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
             {
-                HashSet<string> scenarioFilePathes = new HashSet<string>();
+                if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                {
 
-                var fileScs = patchDirectory.GetFiles("file_sc.txt", SearchOption.TopDirectoryOnly);
-                if(fileScs.Length == 0)
-                {
-                    scenarioNotFound.Add(patchDirectory.FullName);
-                }
-                else
-                {
-                    using (var reader = fileScs[0].OpenText())
+                    HashSet<string> scenarioFilePathes = new HashSet<string>();
+
+                    var fileScs = patchDirectory.GetFiles("file_sc.txt", SearchOption.TopDirectoryOnly);
+                    if (fileScs.Length == 0)
                     {
-                        string currScenario = reader.ReadToEnd();
-                        string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-                        foreach (string oldScenarioLine in currScenarioLines)
+                        scenarioNotFound.Add(patchDirectory.FullName);
+                    }
+                    else
+                    {
+                        using (var reader = fileScs[0].OpenText())
                         {
-                            MatchCollection ORAMatches = ORAPathFromScenarioLine.Matches(oldScenarioLine);
-                            MatchCollection IPCMatches = IPCPathFromScenarioLine.Matches(oldScenarioLine);
-                            MatchCollection STWFMatches = STWFPathFromScenarioLine.Matches(oldScenarioLine);
+                            string currScenario = reader.ReadToEnd();
+                            string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-                            MatchCollection mainMatchCollection =
-                                ORAMatches.Count > 0 ? ORAMatches :
-                                IPCMatches.Count > 0 ? IPCMatches :
-                                STWFMatches.Count > 0 ? STWFMatches : null;
-
-                            if (mainMatchCollection != null)
+                            foreach (string oldScenarioLine in currScenarioLines)
                             {
-                                string fullPath = Path.Combine(patchDirectory.FullName, mainMatchCollection[0].Groups[1].Value);
-                                scenarioFilePathes.Add(fullPath);
-                                if(!File.Exists(fullPath))
+                                MatchCollection ORAMatches = ORAPathFromScenarioLine.Matches(oldScenarioLine);
+                                MatchCollection IPCMatches = IPCPathFromScenarioLine.Matches(oldScenarioLine);
+                                MatchCollection STWFMatches = STWFPathFromScenarioLine.Matches(oldScenarioLine);
+
+                                MatchCollection mainMatchCollection =
+                                    ORAMatches.Count > 0 ? ORAMatches :
+                                    IPCMatches.Count > 0 ? IPCMatches :
+                                    STWFMatches.Count > 0 ? STWFMatches : null;
+
+                                if (mainMatchCollection != null)
                                 {
-                                    int insertIndex = mainMatchCollection[0].Groups[1].Index;
-                                    filesNotFound.Add(FPScenarioLineByPatchScenarioLine(oldScenarioLine, patchDirectory, insertIndex));
+                                    string fullPath = Path.Combine(patchDirectory.FullName, mainMatchCollection[0].Groups[1].Value);
+                                    scenarioFilePathes.Add(fullPath);
+                                    if (!File.Exists(fullPath))
+                                    {
+                                        int insertIndex = mainMatchCollection[0].Groups[1].Index;
+                                        filesNotFound.Add(FPScenarioLineByPatchScenarioLine(oldScenarioLine, patchDirectory, insertIndex));
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                foreach(FileInfo fileInfo in patchDirectory.EnumerateFiles("*.*", SearchOption.AllDirectories))
-                {
-                    if(!scenarioFilePathes.Contains(fileInfo.FullName))
+                    foreach (FileInfo fileInfo in patchDirectory.EnumerateFiles("*.*", SearchOption.AllDirectories))
                     {
-                        if (!WrongFiles.IsMatch(fileInfo.FullName))
+                        if (!scenarioFilePathes.Contains(fileInfo.FullName))
                         {
-                            string fromFPDirPath = fileInfo.FullName.Substring(fixpackDirectory.FullName.Length + 1);
-                            linesNotFound.Add(CreateScenarioLineByFromFPDirPath(fromFPDirPath));
+                            if (!WrongFiles.IsMatch(fileInfo.FullName))
+                            {
+                                string fromFPDirPath = fileInfo.FullName.Substring(fixpackDirectory.FullName.Length + 1);
+                                linesNotFound.Add(CreateScenarioLineByFromFPDirPath(fromFPDirPath));
+                            }
                         }
                     }
                 }
             }
         }
 
-        public static void CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory)
+        //компаратор нужен для того, чтобы в сортированный список можно было добавлять пары с одинаковыми ключами
+        public class DuplicateKeyComparer<TKey> : IComparer<TKey> where TKey : IComparable
         {
-            CheckFilesAndPatchScenario(fixpackDirectory, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
+            public int Compare(TKey x, TKey y)
+            {
+                int result = x.CompareTo(y);
+
+                if (result == 0)
+                    return -1;   // обрабатываем равенство как "меньше", будет вставлять как в патче
+                else
+                    return result;
+            }
+        }
+
+        public static int Priority(string line)
+        {
+            int priority = 0;
+
+            //скрипты
+            if (line.IndexOf("||DB_SCRIPT", StringComparison.InvariantCultureIgnoreCase) != -1)
+            {
+                priority += 1000;
+
+                //порядок в скриптах
+                if (line.IndexOf("\\SEQUENCE", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 5;
+                else if (line.IndexOf("\\TABLE", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 10;
+                else if (line.IndexOf("\\INDEX", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 15;
+                else if (line.IndexOf("\\VIEW", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 20;
+                else if (line.IndexOf("\\FUNCTION", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 25;
+                else if (line.IndexOf("\\PROCEDURE", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 30;
+                else if (line.IndexOf("\\PACKAGE", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 35;
+                else if (line.IndexOf("\\SCRIPT", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 40;
+
+                //DBATOOLS в конец скриптов
+                if (line.IndexOf("\\DBATOOLS", StringComparison.InvariantCultureIgnoreCase) != -1)
+                {
+                    priority += 100;
+                }
+            }
+
+            //информатика
+            else if (line.IndexOf("||INFA_XML", StringComparison.InvariantCultureIgnoreCase) != -1)
+            {
+                priority += 2000;
+
+                //сначала shared
+                if (line.IndexOf("\\SHARED", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 100;
+                else priority += 200;
+
+                //порядок в информатике 
+                if (line.IndexOf("\\SOURCE", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 5;
+                else if (line.IndexOf("\\TARGET", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 10;
+                else if (line.IndexOf("\\USER-DEFINED FUNCTION", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 15;
+                else if (line.IndexOf("\\EXP_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 20;
+                else if (line.IndexOf("\\SEQ_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 25;
+                else if (line.IndexOf("\\LKP_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 30;
+                else if (line.IndexOf("\\MPL_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 35;
+                else if (line.IndexOf("\\M_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 40;
+                else if (line.IndexOf("\\CMD_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 45;
+                else if (line.IndexOf("\\S_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 50;
+                else if (line.IndexOf("\\WKLT_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 55;
+                else if (line.IndexOf("\\WF_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 60;
+            }
+
+            //старты потоков
+            else if (line.IndexOf("||START_WF") != -1)
+            {
+                priority += 3000;
+            }
+
+            return priority;
+        }
+
+        public static void CreateFPScenarioByFiles(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
+        {
+            List<string> newScenarioLines = new List<string>();
+            foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+            {
+                if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                {
+                    SortedList<int, string> priorityLinePair = new SortedList<int, string>(new DuplicateKeyComparer<int>());
+
+                    foreach (FileInfo fileInfo in patchDirectory.EnumerateFiles("*.*", SearchOption.AllDirectories))
+                    {
+                        string fromFPPath = fileInfo.FullName.Substring(fixpackDirectory.FullName.Length + 1);
+                        if (!WrongFiles.IsMatch(fromFPPath))
+                        {
+                            string scenarioLine = CreateScenarioLineByFromFPDirPath(fromFPPath);
+
+                            priorityLinePair.Add(Priority(scenarioLine), scenarioLine);
+                        }
+                    }
+
+                    newScenarioLines.AddRange(priorityLinePair.Values);
+                }
+            }
+
+            SaveFileSc(fixpackDirectory, newScenarioLines);
+        }
+
+        public static void CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
+        {
+            CheckFilesAndPatchScenario(fixpackDirectory, selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
 
             if(scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0)
             {
@@ -110,16 +235,19 @@ namespace AutogenerateFixpack
 
             foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
             {
-                var fileScs = patchDirectory.GetFiles("file_sc.txt", SearchOption.TopDirectoryOnly);
-                if (fileScs.Length != 0)
+                if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 {
-                    using (var reader = fileScs[0].OpenText())
+                    var fileScs = patchDirectory.GetFiles("file_sc.txt", SearchOption.TopDirectoryOnly);
+                    if (fileScs.Length != 0)
                     {
-                        string currScenario = reader.ReadToEnd();
-                        string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                        List<string> listScenarioLines = currScenarioLines.ToList();
-                        DefaultScenarioOrderValidation(listScenarioLines);
-                        newScenarioLines.AddRange(CreateNewScenarioLines(fixpackDirectory, patchDirectory, listScenarioLines));
+                        using (var reader = fileScs[0].OpenText())
+                        {
+                            string currScenario = reader.ReadToEnd();
+                            string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                            List<string> listScenarioLines = currScenarioLines.ToList();
+                            DefaultScenarioOrderValidation(listScenarioLines);
+                            newScenarioLines.AddRange(CreateNewScenarioLines(fixpackDirectory, patchDirectory, listScenarioLines));
+                        }
                     }
                 }
             }
