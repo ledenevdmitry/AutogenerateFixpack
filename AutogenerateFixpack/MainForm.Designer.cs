@@ -40,6 +40,7 @@
             this.CbScenario = new System.Windows.Forms.CheckBox();
             this.CbRn = new System.Windows.Forms.CheckBox();
             this.CbExcel = new System.Windows.Forms.CheckBox();
+            this.LbPatches = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // BtByFiles
@@ -117,10 +118,10 @@
             // LboxPatches
             // 
             this.LboxPatches.FormattingEnabled = true;
-            this.LboxPatches.Location = new System.Drawing.Point(128, 101);
+            this.LboxPatches.Location = new System.Drawing.Point(128, 127);
             this.LboxPatches.Name = "LboxPatches";
             this.LboxPatches.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.LboxPatches.Size = new System.Drawing.Size(363, 134);
+            this.LboxPatches.Size = new System.Drawing.Size(363, 108);
             this.LboxPatches.TabIndex = 9;
             // 
             // CbScenario
@@ -159,11 +160,21 @@
             this.CbExcel.Text = "Экселька";
             this.CbExcel.UseVisualStyleBackColor = true;
             // 
+            // LbPatches
+            // 
+            this.LbPatches.AutoSize = true;
+            this.LbPatches.Location = new System.Drawing.Point(127, 102);
+            this.LbPatches.Name = "LbPatches";
+            this.LbPatches.Size = new System.Drawing.Size(159, 13);
+            this.LbPatches.TabIndex = 13;
+            this.LbPatches.Text = "Участвующие в сборке патчи:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 247);
+            this.Controls.Add(this.LbPatches);
             this.Controls.Add(this.CbExcel);
             this.Controls.Add(this.CbRn);
             this.Controls.Add(this.CbScenario);
@@ -198,6 +209,7 @@
         private System.Windows.Forms.CheckBox CbScenario;
         private System.Windows.Forms.CheckBox CbRn;
         private System.Windows.Forms.CheckBox CbExcel;
+        private System.Windows.Forms.Label LbPatches;
     }
 }
 

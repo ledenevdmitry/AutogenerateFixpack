@@ -38,7 +38,7 @@ namespace AutogenerateFixpack
             {
                 if (Directory.Exists(TbFPDir.Text))
                 {
-                    ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text));
+                    ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList());
                 }
                 else
                 {
@@ -125,6 +125,9 @@ namespace AutogenerateFixpack
 
             BtExcelFile.Left = ClientRectangle.Width - BtExcelFile.Width - 8;
             BtFPDir.Left     = ClientRectangle.Width - BtFPDir.Width     - 8;
+
+            LboxPatches.Width  = ClientRectangle.Width - LboxPatches.Left - 8;
+            LboxPatches.Height = ClientRectangle.Height - LboxPatches.Top - 8;
         }
     }
 }

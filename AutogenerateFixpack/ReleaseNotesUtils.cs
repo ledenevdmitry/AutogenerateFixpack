@@ -109,7 +109,7 @@ namespace AutogenerateFixpack
             }
         }
 
-        public static void GenerateReleaseNotes(DirectoryInfo fixpackDir)
+        public static void GenerateReleaseNotes(DirectoryInfo fixpackDir, List<DirectoryInfo> selectedPatches)
         {
             if (wordApp == null)
                 wordApp = new Microsoft.Office.Interop.Word.Application();
@@ -146,16 +146,19 @@ namespace AutogenerateFixpack
                 List<DirectoryInfo> backwardSortedDirList = fixpackDir.GetDirectories().ToList();
                 backwardSortedDirList.Sort((x, y) => -x.Name.CompareTo(y.Name));
 
-                foreach (DirectoryInfo subDir in backwardSortedDirList)
+                foreach (DirectoryInfo patchDirectory in backwardSortedDirList)
                 {
-                    Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(subDir.FullName, "release_notes.docx"), System.Type.Missing, true);
+                    if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                    {
+                        Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(patchDirectory.FullName, "release_notes.docx"), System.Type.Missing, true);
 
-                    SetPrerequisites(admReleaseNotes, devReleaseNotes);
-                    SetBeforeInstruction(admReleaseNotes, devReleaseNotes, subDir);
-                    SetAfterInstruction(admReleaseNotes, devReleaseNotes, subDir);
-                    SetUninstall(admReleaseNotes, devReleaseNotes, subDir);
+                        SetPrerequisites(admReleaseNotes, devReleaseNotes);
+                        SetBeforeInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
+                        SetAfterInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
+                        SetUninstall(admReleaseNotes, devReleaseNotes, patchDirectory);
 
-                    devReleaseNotes.Close();
+                        devReleaseNotes.Close();
+                    }
                 }
                 admReleaseNotes.Save();
                 admReleaseNotes.Close();

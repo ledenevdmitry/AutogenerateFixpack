@@ -56,7 +56,7 @@ namespace AutogenerateFixpack
 
             workbook.Close();
 
-            MessageBox.Show("Эксель-файл собран");
+            MessageBox.Show("Эксель-файл собран", "Выполнено", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
     }
 }
