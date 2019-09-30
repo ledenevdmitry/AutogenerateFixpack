@@ -16,13 +16,22 @@ namespace AutogenerateFixpack
         public MainForm()
         {
             InitializeComponent();
-            TbFPDir.Text = Properties.Settings.Default.fixpackPath;
-            TbExcelFile.Text = Properties.Settings.Default.excelPath;
 
-            foreach (DirectoryInfo directoryInfo in new DirectoryInfo(Properties.Settings.Default.fixpackPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.fixpackPath))
             {
-                LboxPatches.Items.Add(directoryInfo);
-                LboxPatches.SelectedItem = directoryInfo;
+                TbFPDir.Text = Properties.Settings.Default.fixpackPath;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.fixpackPath))
+            {
+                TbExcelFile.Text = Properties.Settings.Default.excelPath;
+
+                LboxPatches.Items.Clear();
+                foreach (DirectoryInfo directoryInfo in new DirectoryInfo(Properties.Settings.Default.fixpackPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+                {
+                    LboxPatches.Items.Add(directoryInfo);
+                    LboxPatches.SelectedItem = directoryInfo;
+                }
             }
         }
 
@@ -49,7 +58,7 @@ namespace AutogenerateFixpack
             {
                 if (File.Exists(TbExcelFile.Text))
                 {
-                    ExcelUtils.PrepareExcelFile(new FileInfo(TbExcelFile.Text));
+                    ExcelUtils.PrepareExcelFile(new FileInfo(TbExcelFile.Text), new DirectoryInfo(TbFPDir.Text));
                 }
                 else
                 {
@@ -88,6 +97,7 @@ namespace AutogenerateFixpack
             Properties.Settings.Default.fixpackPath = fbd.SelectedPath;
             Properties.Settings.Default.Save();
 
+            LboxPatches.Items.Clear();
             foreach(DirectoryInfo directoryInfo in new DirectoryInfo(fbd.SelectedPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
             {
                 LboxPatches.Items.Add(directoryInfo);

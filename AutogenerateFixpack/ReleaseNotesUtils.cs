@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -48,7 +49,14 @@ namespace AutogenerateFixpack
         private static void SetAdminName(Document admReleaseNotes)
         {
             object objBookmark = "ADMIN_NAME";
-            admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = Environment.UserName;
+
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Machine))
+            {
+                using (UserPrincipal up = UserPrincipal.Current)
+                {                    
+                    admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = up.DisplayName;
+                }
+            }
         }
 
         private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes)
@@ -115,7 +123,7 @@ namespace AutogenerateFixpack
                 wordApp = new Microsoft.Office.Interop.Word.Application();
 
             FileInfo releaseNotesFile = new FileInfo(Path.Combine(fixpackDir.FullName, "release_notes.docx"));
-            FileInfo releaseNotesFileSEED = new FileInfo(Path.Combine(fixpackDir.FullName, "Release_Notes_SEED.docx"));
+            FileInfo releaseNotesFileSEED = new FileInfo("Release_Notes_SEED.docx");
 
             DialogResult result = DialogResult.None;
 

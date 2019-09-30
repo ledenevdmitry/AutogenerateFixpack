@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace AutogenerateFixpack
                 if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 {
 
-                    HashSet<string> scenarioFilePathes = new HashSet<string>();
+                    List<string> scenarioFilePathes = new List<string>();
 
                     var fileScs = patchDirectory.GetFiles("file_sc.txt", SearchOption.TopDirectoryOnly);
                     if (fileScs.Length == 0)
@@ -80,7 +81,7 @@ namespace AutogenerateFixpack
 
                     foreach (FileInfo fileInfo in patchDirectory.EnumerateFiles("*.*", SearchOption.AllDirectories))
                     {
-                        if (!scenarioFilePathes.Contains(fileInfo.FullName))
+                        if (scenarioFilePathes.Where(x => x.Equals(fileInfo.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() == 0)
                         {
                             if (!WrongFiles.IsMatch(fileInfo.FullName))
                             {
@@ -284,7 +285,7 @@ namespace AutogenerateFixpack
         static Regex ORAPathFromScenarioLine  = new Regex(@"ORA\|\|(.*)\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex IPCPathFromScenarioLine = new Regex(@"IPC\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex STWFPathFromScenarioLine = new Regex(@"IPC\|\|(.*)", RegexOptions.IgnoreCase);
-        static Regex WrongFiles = new Regex(@"file_sc\.|RELEASE_NOTES\.|VSSVER2\.|\.xls", RegexOptions.IgnoreCase);
+        static Regex WrongFiles = new Regex(@"file_sc\.|RELEASE_NOTES\.|VSSVER2\.|\.xls|IVSS\.tmp", RegexOptions.IgnoreCase);
 
         static Regex ORASchemaFromScenarioLine = new Regex(@"([^\\]+)@");
 
@@ -346,7 +347,7 @@ namespace AutogenerateFixpack
                 }
             }
 
-            if (firstDWHLine != -1 && lastDWHLine != -1 && firstDBATOOLSLine != -1 && lastDBATOOLSLine != -1 && lastDBATOOLSLine > firstDWHLine)
+            if (firstDWHLine != -1 && lastDWHLine != -1 && firstDBATOOLSLine != -1 && lastDBATOOLSLine != -1 && lastDBATOOLSLine < firstDWHLine)
             {
                 //забираем все DWH
                 var dwhScenarioLines = scenario.GetRange(firstDWHLine, lastDWHLine - firstDWHLine + 1);

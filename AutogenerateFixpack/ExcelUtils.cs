@@ -18,7 +18,7 @@ namespace AutogenerateFixpack
 
         public static HashSet<string> headers = new HashSet<string>(new string[] { "Тема", "Автор", "QC ID", "CR (номер изменения)", "FSD и пункты FSD", "Entity", "Описание", "Связанные запросы", "Длительная установка" });
 
-        public static void PrepareExcelFile(FileInfo excelFile)
+        public static void PrepareExcelFile(FileInfo excelFile, DirectoryInfo fixpackDir)
         {
             if (excApp == null)
                 excApp = new Microsoft.Office.Interop.Excel.Application();
@@ -50,7 +50,7 @@ namespace AutogenerateFixpack
             int lastRowIndex = range.Rows.Count;
             worksheet.Rows[lastRowIndex].Delete();
             
-            string filename = Path.Combine(excelFile.Directory.Parent.FullName, CRegex.Match(excelFile.FullName).Groups[1].Value) + ".xlsx";
+            string filename = Path.Combine(fixpackDir.Parent.FullName, CRegex.Match(fixpackDir.Name).Groups[1].Value) + ".xlsx";
 
             workbook.SaveAs(filename, XlFileFormat.xlOpenXMLWorkbook, Type.Missing, Type.Missing, true, false, XlSaveAsAccessMode.xlNoChange, XlSaveConflictResolution.xlLocalSessionChanges, Type.Missing, Type.Missing);
 
