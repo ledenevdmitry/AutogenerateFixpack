@@ -41,6 +41,7 @@
             this.CbRn = new System.Windows.Forms.CheckBox();
             this.CbExcel = new System.Windows.Forms.CheckBox();
             this.LbPatches = new System.Windows.Forms.Label();
+            this.lbStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // BtByFiles
@@ -169,11 +170,20 @@
             this.LbPatches.TabIndex = 13;
             this.LbPatches.Text = "Участвующие в сборке патчи:";
             // 
+            // lbStatus
+            // 
+            this.lbStatus.AutoSize = true;
+            this.lbStatus.Location = new System.Drawing.Point(12, 168);
+            this.lbStatus.Name = "lbStatus";
+            this.lbStatus.Size = new System.Drawing.Size(0, 13);
+            this.lbStatus.TabIndex = 14;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 247);
+            this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.LbPatches);
             this.Controls.Add(this.CbExcel);
             this.Controls.Add(this.CbRn);
@@ -210,6 +220,7 @@
         private System.Windows.Forms.CheckBox CbRn;
         private System.Windows.Forms.CheckBox CbExcel;
         private System.Windows.Forms.Label LbPatches;
+        private System.Windows.Forms.Label lbStatus;
     }
 }
 

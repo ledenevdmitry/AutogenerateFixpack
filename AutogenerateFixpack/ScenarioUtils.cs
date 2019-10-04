@@ -278,7 +278,6 @@ namespace AutogenerateFixpack
                             tw.WriteLine(line);
                     }
                 }
-                MessageBox.Show("Файл сценария создан", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

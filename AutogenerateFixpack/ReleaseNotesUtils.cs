@@ -5,6 +5,7 @@ using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -57,16 +58,25 @@ namespace AutogenerateFixpack
                     admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text = up.DisplayName;
                 }
             }
-        }
+        }       
 
-        private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes)
+        private static void SetPrerequisites(Document admReleaseNotes, Document devReleaseNotes, out bool prereqAdded)
         {
             var prereqCell = devReleaseNotes.Tables[1].Cell(6, 1);
-            string prereqText = prereqCell.Range.Text.Trim(new char[] { '\n', '\r', '\t' });
-            if (prereqText != "\r\a")
+            string[] prereqText = prereqCell.Range.Text.Split(new[] { Environment.NewLine, "\r\a" }, StringSplitOptions.RemoveEmptyEntries);
+            object objBookmark = "PREREQUISITES";
+
+            Range range = admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range;
+
+            prereqAdded = false;
+
+            foreach (var prereqLine in prereqText)
             {
-                object objBookmark = "PREREQUISITES";
-                admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range.Text += prereqCell.Range.Text;                
+                if (!string.IsNullOrWhiteSpace(prereqLine))
+                {
+                    range.Text += prereqLine + Environment.NewLine;
+                    prereqAdded = true;
+                }
             }
         }    
         
@@ -90,7 +100,7 @@ namespace AutogenerateFixpack
 
         private static void CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
         {
-            if (!string.IsNullOrEmpty(rangeToCopy.Text.Trim(new char[] { ' ', '\r', '\n', '\a'})))
+            if (!string.IsNullOrEmpty(rangeToCopy.Text.Replace("\r", "").Replace("\n", "").Replace("\a", "")))
             {
                 rangeWhere.InsertParagraphAfter();
                 rangeWhere = admReleaseNotes.Range(rangeWhere.End, rangeWhere.End);
@@ -154,13 +164,18 @@ namespace AutogenerateFixpack
                 List<DirectoryInfo> backwardSortedDirList = fixpackDir.GetDirectories().ToList();
                 backwardSortedDirList.Sort((x, y) => -x.Name.CompareTo(y.Name));
 
+                bool prereqAdded = false;
+                bool prereqAddedOnce = false;
+
                 foreach (DirectoryInfo patchDirectory in backwardSortedDirList)
                 {
                     if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                     {
                         Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(patchDirectory.FullName, "release_notes.docx"), System.Type.Missing, true);
 
-                        SetPrerequisites(admReleaseNotes, devReleaseNotes);
+                        SetPrerequisites(admReleaseNotes, devReleaseNotes, out prereqAdded);
+                        prereqAddedOnce |= prereqAdded;
+
                         SetBeforeInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
                         SetAfterInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
                         SetUninstall(admReleaseNotes, devReleaseNotes, patchDirectory);
@@ -168,9 +183,16 @@ namespace AutogenerateFixpack
                         devReleaseNotes.Close();
                     }
                 }
+
+                object objBookmark = "PREREQUISITES";
+                Range range = admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range;
+                if (!prereqAddedOnce)
+                {
+                    range.Text = "-";
+                }
+
                 admReleaseNotes.Save();
                 admReleaseNotes.Close();
-                MessageBox.Show("Release Notes собран!", "Выполнено", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
 
         }

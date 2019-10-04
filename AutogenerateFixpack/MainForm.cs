@@ -39,15 +39,18 @@ namespace AutogenerateFixpack
 
         private void GenerateFixpack(ScenarioGenerator generator)
         {
+            lbStatus.Text = "";
             if (CbScenario.Checked)
             {
                 generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList());
+                lbStatus.Text += "Файл сценария создан" + Environment.NewLine;
             }
             if (CbRn.Checked)
             {
                 if (Directory.Exists(TbFPDir.Text))
                 {
                     ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList());
+                    lbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
                 }
                 else
                 {
@@ -59,12 +62,14 @@ namespace AutogenerateFixpack
                 if (File.Exists(TbExcelFile.Text))
                 {
                     ExcelUtils.PrepareExcelFile(new FileInfo(TbExcelFile.Text), new DirectoryInfo(TbFPDir.Text));
+                    lbStatus.Text += "Эксель-файл создан" + Environment.NewLine;
                 }
                 else
                 {
                     MessageBox.Show($"Исходный эксель файл {TbExcelFile.Text} не найден!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            lbStatus.Text += "Готово!";
         }
 
         private void BtByFiles_Click(object sender, EventArgs e)
