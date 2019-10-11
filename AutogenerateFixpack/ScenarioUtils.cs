@@ -12,21 +12,25 @@ namespace AutogenerateFixpack
 {
     class ScenarioUtils
     {
-        private static string CreateScenarioLineByFromFPDirPath(string path)
+        private static bool CreateScenarioLineByFromFPDirPath(string path, out string scenarioLine)
         {
             if (path.IndexOf(".sql", StringComparison.InvariantCultureIgnoreCase) > -1)
             {
-                return $"ORA||{path}||{ORASchemaFromScenarioLine.Match(path).Groups[1].Value}";
+                scenarioLine = $"ORA||{path}||{ORASchemaFromScenarioLine.Match(path).Groups[1].Value}";
+                return true;
             }
             if (path.IndexOf(".xml", StringComparison.InvariantCultureIgnoreCase) > -1)
             {
-                return $"IPC||{path}";
+                scenarioLine = $"IPC||{path}";
+                return true;
             }
             if (path.IndexOf(".txt", StringComparison.InvariantCultureIgnoreCase) > -1)
             {
-                return $"STWF||{path}";
+                scenarioLine = $"STWF||{path}";
+                return true;
             }
-            throw new Exception($"Неизвестный тип для файла {path}. Невозможно создать строку сценария");
+            scenarioLine = null;
+            return false;
         }
 
         public static void CheckFilesAndPatchScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound)
@@ -68,7 +72,7 @@ namespace AutogenerateFixpack
                                 if (mainMatchCollection != null)
                                 {
                                     string fullPath = Path.Combine(patchDirectory.FullName, mainMatchCollection[0].Groups[1].Value);
-                                    scenarioFilePathes.Add(fullPath);
+                                    scenarioFilePathes.Add(fullPath.Trim());
                                     if (!File.Exists(fullPath))
                                     {
                                         int insertIndex = mainMatchCollection[0].Groups[1].Index;
@@ -86,7 +90,14 @@ namespace AutogenerateFixpack
                             if (!WrongFiles.IsMatch(fileInfo.FullName))
                             {
                                 string fromFPDirPath = fileInfo.FullName.Substring(fixpackDirectory.FullName.Length + 1);
-                                linesNotFound.Add(CreateScenarioLineByFromFPDirPath(fromFPDirPath));
+                                if (CreateScenarioLineByFromFPDirPath(fromFPDirPath, out string scenarioLine))
+                                {
+                                    linesNotFound.Add(scenarioLine);
+                                }
+                                else
+                                {
+                                    linesNotFound.Add(fromFPDirPath);
+                                }
                             }
                         }
                     }
@@ -202,9 +213,10 @@ namespace AutogenerateFixpack
                         string fromFPPath = fileInfo.FullName.Substring(fixpackDirectory.FullName.Length + 1);
                         if (!WrongFiles.IsMatch(fromFPPath))
                         {
-                            string scenarioLine = CreateScenarioLineByFromFPDirPath(fromFPPath);
-
-                            priorityLinePair.Add(Priority(scenarioLine), scenarioLine);
+                            if (CreateScenarioLineByFromFPDirPath(fromFPPath, out string scenarioLine))
+                            {
+                                priorityLinePair.Add(Priority(scenarioLine), scenarioLine);
+                            }
                         }
                     }
 
@@ -283,7 +295,7 @@ namespace AutogenerateFixpack
 
         static Regex ORAPathFromScenarioLine  = new Regex(@"ORA\|\|(.*)\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex IPCPathFromScenarioLine = new Regex(@"IPC\|\|(.*)", RegexOptions.IgnoreCase);
-        static Regex STWFPathFromScenarioLine = new Regex(@"IPC\|\|(.*)", RegexOptions.IgnoreCase);
+        static Regex STWFPathFromScenarioLine = new Regex(@"STWF\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex WrongFiles = new Regex(@"file_sc\.|RELEASE_NOTES\.|VSSVER2\.|\.xls|IVSS\.tmp", RegexOptions.IgnoreCase);
 
         static Regex ORASchemaFromScenarioLine = new Regex(@"([^\\]+)@");

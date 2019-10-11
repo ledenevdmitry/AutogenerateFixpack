@@ -119,10 +119,10 @@
             // LboxPatches
             // 
             this.LboxPatches.FormattingEnabled = true;
-            this.LboxPatches.Location = new System.Drawing.Point(128, 127);
+            this.LboxPatches.Location = new System.Drawing.Point(149, 127);
             this.LboxPatches.Name = "LboxPatches";
             this.LboxPatches.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.LboxPatches.Size = new System.Drawing.Size(363, 108);
+            this.LboxPatches.Size = new System.Drawing.Size(342, 108);
             this.LboxPatches.TabIndex = 9;
             // 
             // CbScenario
@@ -164,7 +164,7 @@
             // LbPatches
             // 
             this.LbPatches.AutoSize = true;
-            this.LbPatches.Location = new System.Drawing.Point(127, 102);
+            this.LbPatches.Location = new System.Drawing.Point(146, 102);
             this.LbPatches.Name = "LbPatches";
             this.LbPatches.Size = new System.Drawing.Size(159, 13);
             this.LbPatches.TabIndex = 13;
