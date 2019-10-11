@@ -33,9 +33,13 @@ namespace AutogenerateFixpack
                     LboxPatches.SelectedItem = directoryInfo;
                 }
             }
+
+            CbScenario.Checked = Properties.Settings.Default.fileScChecked;
+            CbRn.Checked = Properties.Settings.Default.releaseNotesChecked;
+            CbExcel.Checked = Properties.Settings.Default.excelFileChecked;
         }
 
-        delegate void ScenarioGenerator(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches);
+        delegate bool ScenarioGenerator(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches);
 
         private void GenerateFixpack(ScenarioGenerator generator)
         {
@@ -49,8 +53,10 @@ namespace AutogenerateFixpack
             {
                 if (Directory.Exists(TbFPDir.Text))
                 {
-                    ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList());
-                    lbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
+                    if (ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList()))
+                    {
+                        lbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
+                    }
                 }
                 else
                 {
@@ -79,10 +85,23 @@ namespace AutogenerateFixpack
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(ReleaseNotesUtils.wordApp != null)
-                ReleaseNotesUtils.wordApp.Quit();
-            if(ExcelUtils.excApp != null)
-                ExcelUtils.excApp.Quit();
+            Properties.Settings.Default.fileScChecked = CbScenario.Checked;
+            Properties.Settings.Default.releaseNotesChecked = CbRn.Checked;
+            Properties.Settings.Default.excelFileChecked = CbExcel.Checked;
+            Properties.Settings.Default.Save();
+
+            if (ReleaseNotesUtils.wordApp != null)
+                try
+                {
+                    ReleaseNotesUtils.wordApp.Quit();
+                }
+                catch { }
+            if (ExcelUtils.excApp != null)
+                try
+                {
+                    ExcelUtils.excApp.Quit();
+                }
+                catch { }
         }
 
         private void BtFPDir_Click(object sender, EventArgs e)
@@ -113,6 +132,7 @@ namespace AutogenerateFixpack
         private void BtExcelFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Эксель файлы|*.xls*";
 
             if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.excelPath))
             {

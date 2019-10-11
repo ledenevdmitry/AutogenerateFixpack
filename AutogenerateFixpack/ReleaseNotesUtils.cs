@@ -127,7 +127,7 @@ namespace AutogenerateFixpack
             }
         }
 
-        public static void GenerateReleaseNotes(DirectoryInfo fixpackDir, List<DirectoryInfo> selectedPatches)
+        public static bool GenerateReleaseNotes(DirectoryInfo fixpackDir, List<DirectoryInfo> selectedPatches)
         {
             if (wordApp == null)
                 wordApp = new Microsoft.Office.Interop.Word.Application();
@@ -194,8 +194,12 @@ namespace AutogenerateFixpack
                 admReleaseNotes.Save();
                 admReleaseNotes.Close();
             }
+            else
+            {
+                return false;
+            }
 
+            return true;
         }
-
     }
 }

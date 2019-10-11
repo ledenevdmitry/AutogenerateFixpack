@@ -46,5 +46,41 @@ namespace AutogenerateFixpack.Properties {
                 this["excelPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool fileScChecked {
+            get {
+                return ((bool)(this["fileScChecked"]));
+            }
+            set {
+                this["fileScChecked"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool releaseNotesChecked {
+            get {
+                return ((bool)(this["releaseNotesChecked"]));
+            }
+            set {
+                this["releaseNotesChecked"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool excelFileChecked {
+            get {
+                return ((bool)(this["excelFileChecked"]));
+            }
+            set {
+                this["excelFileChecked"] = value;
+            }
+        }
     }
 }

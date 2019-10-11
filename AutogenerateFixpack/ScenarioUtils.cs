@@ -199,7 +199,7 @@ namespace AutogenerateFixpack
             return priority;
         }
 
-        public static void CreateFPScenarioByFiles(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
+        public static bool CreateFPScenarioByFiles(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
         {
             List<string> newScenarioLines = new List<string>();
             foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
@@ -225,9 +225,11 @@ namespace AutogenerateFixpack
             }
 
             SaveFileSc(fixpackDirectory, newScenarioLines);
+
+            return true;
         }
 
-        public static void CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
+        public static bool CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
         {
             CheckFilesAndPatchScenario(fixpackDirectory, selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
 
@@ -238,9 +240,11 @@ namespace AutogenerateFixpack
                     string.Join(Environment.NewLine, filesNotFound),
                     string.Join(Environment.NewLine, linesNotFound));
 
-                if(cf.ShowDialog() == DialogResult.Abort)
+                DialogResult dr = cf.ShowDialog();
+
+                if (dr == DialogResult.Abort || dr == DialogResult.Cancel)
                 {
-                    return;
+                    return false;
                 }
             }
 
@@ -266,6 +270,7 @@ namespace AutogenerateFixpack
             }
             
             SaveFileSc(fixpackDirectory, newScenarioLines);
+            return true;
         }
 
         public static void SaveFileSc(DirectoryInfo fixpackDir, IEnumerable<string> text)

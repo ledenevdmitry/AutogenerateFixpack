@@ -30,5 +30,22 @@ namespace AutogenerateFixpack
         {
             DialogResult = DialogResult.OK;
         }
+
+        private void CheckForm_Resize(object sender, EventArgs e)
+        {
+            GbFilesNotFound.Width = ClientRectangle.Width - 2 * 8;
+            GbLinesNotFound.Width = ClientRectangle.Width - 2 * 8;
+            GbScenariosNotFound.Width = ClientRectangle.Width - 2 * 8;
+
+            GbFilesNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 3;
+            GbLinesNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 3;
+            GbScenariosNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 3;
+
+            GbLinesNotFound.Top = GbFilesNotFound.Bottom + 8;
+            GbScenariosNotFound.Top = GbLinesNotFound.Bottom + 8;
+
+            BtAbort.Top = GbScenariosNotFound.Bottom + 8 / 2;
+            BtContinue.Top = GbScenariosNotFound.Bottom + 8 / 2;
+        }
     }
 }

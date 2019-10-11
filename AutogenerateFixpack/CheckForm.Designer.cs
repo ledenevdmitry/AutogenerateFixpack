@@ -43,11 +43,12 @@
             // 
             // TbFilesNotFound
             // 
-            this.TbFilesNotFound.Location = new System.Drawing.Point(6, 19);
+            this.TbFilesNotFound.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TbFilesNotFound.Location = new System.Drawing.Point(3, 16);
             this.TbFilesNotFound.Multiline = true;
             this.TbFilesNotFound.Name = "TbFilesNotFound";
             this.TbFilesNotFound.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TbFilesNotFound.Size = new System.Drawing.Size(495, 92);
+            this.TbFilesNotFound.Size = new System.Drawing.Size(501, 98);
             this.TbFilesNotFound.TabIndex = 0;
             // 
             // GbFilesNotFound
@@ -72,11 +73,12 @@
             // 
             // TbLinesNotFound
             // 
-            this.TbLinesNotFound.Location = new System.Drawing.Point(6, 19);
+            this.TbLinesNotFound.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TbLinesNotFound.Location = new System.Drawing.Point(3, 16);
             this.TbLinesNotFound.Multiline = true;
             this.TbLinesNotFound.Name = "TbLinesNotFound";
             this.TbLinesNotFound.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TbLinesNotFound.Size = new System.Drawing.Size(495, 92);
+            this.TbLinesNotFound.Size = new System.Drawing.Size(501, 98);
             this.TbLinesNotFound.TabIndex = 0;
             // 
             // GbScenariosNotFound
@@ -91,11 +93,12 @@
             // 
             // TbScenariosNotFound
             // 
-            this.TbScenariosNotFound.Location = new System.Drawing.Point(6, 19);
+            this.TbScenariosNotFound.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TbScenariosNotFound.Location = new System.Drawing.Point(3, 16);
             this.TbScenariosNotFound.Multiline = true;
             this.TbScenariosNotFound.Name = "TbScenariosNotFound";
             this.TbScenariosNotFound.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TbScenariosNotFound.Size = new System.Drawing.Size(495, 92);
+            this.TbScenariosNotFound.Size = new System.Drawing.Size(501, 98);
             this.TbScenariosNotFound.TabIndex = 0;
             // 
             // BtAbort
@@ -130,6 +133,7 @@
             this.Controls.Add(this.GbFilesNotFound);
             this.Name = "CheckForm";
             this.Text = "Проверка";
+            this.Resize += new System.EventHandler(this.CheckForm_Resize);
             this.GbFilesNotFound.ResumeLayout(false);
             this.GbFilesNotFound.PerformLayout();
             this.GbLinesNotFound.ResumeLayout(false);
