@@ -42,6 +42,7 @@
             this.CbExcel = new System.Windows.Forms.CheckBox();
             this.LbPatches = new System.Windows.Forms.Label();
             this.lbStatus = new System.Windows.Forms.Label();
+            this.BtCheckRelease = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // BtByFiles
@@ -178,11 +179,22 @@
             this.lbStatus.Size = new System.Drawing.Size(0, 13);
             this.lbStatus.TabIndex = 14;
             // 
+            // BtCheckRelease
+            // 
+            this.BtCheckRelease.Location = new System.Drawing.Point(90, 67);
+            this.BtCheckRelease.Name = "BtCheckRelease";
+            this.BtCheckRelease.Size = new System.Drawing.Size(110, 23);
+            this.BtCheckRelease.TabIndex = 15;
+            this.BtCheckRelease.Text = "Сверить релиз";
+            this.BtCheckRelease.UseVisualStyleBackColor = true;
+            this.BtCheckRelease.Click += new System.EventHandler(this.BtCheckRelease_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 247);
+            this.Controls.Add(this.BtCheckRelease);
             this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.LbPatches);
             this.Controls.Add(this.CbExcel);
@@ -221,6 +233,7 @@
         private System.Windows.Forms.CheckBox CbExcel;
         private System.Windows.Forms.Label LbPatches;
         private System.Windows.Forms.Label lbStatus;
+        private System.Windows.Forms.Button BtCheckRelease;
     }
 }
 

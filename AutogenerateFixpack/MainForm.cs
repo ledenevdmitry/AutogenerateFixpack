@@ -166,5 +166,31 @@ namespace AutogenerateFixpack
             LboxPatches.Width  = ClientRectangle.Width - LboxPatches.Left - 8;
             LboxPatches.Height = ClientRectangle.Height - LboxPatches.Top - 8;
         }
+
+        private void BtCheckRelease_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (Directory.Exists(TbFPDir.Text))
+            {
+                fbd.SelectedPath = new DirectoryInfo(TbFPDir.Text).Parent.FullName;
+            }
+
+            if(fbd.ShowDialog() == DialogResult.OK)
+            {
+                DirectoryInfo releaseDir = new DirectoryInfo(fbd.SelectedPath);
+
+                ScenarioUtils.CheckFilesAndPatchScenario(releaseDir, releaseDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly).ToList(), out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
+
+                if (scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0)
+                {
+                    CheckForm cf = new CheckForm(
+                        string.Join(Environment.NewLine, scenarioNotFound),
+                        string.Join(Environment.NewLine, filesNotFound),
+                        string.Join(Environment.NewLine, linesNotFound));
+
+                    DialogResult dr = cf.ShowDialog();
+                }
+            }
+        }
     }
 }
