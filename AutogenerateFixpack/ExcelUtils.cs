@@ -54,7 +54,17 @@ namespace AutogenerateFixpack
 
             workbook.SaveAs(filename, XlFileFormat.xlOpenXMLWorkbook, Type.Missing, Type.Missing, true, false, XlSaveAsAccessMode.xlNoChange, XlSaveConflictResolution.xlLocalSessionChanges, Type.Missing, Type.Missing);
 
+            FileInfo resExcelFile = new FileInfo(filename);
+
             workbook.Close();
+
+            string newPath = Path.Combine(fixpackDir.FullName, resExcelFile.Name);
+            if(File.Exists(newPath))
+            {
+                File.Delete(newPath);
+            }
+
+            resExcelFile.MoveTo(newPath);
 
         }
     }

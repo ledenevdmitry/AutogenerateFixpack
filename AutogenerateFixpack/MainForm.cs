@@ -131,14 +131,16 @@ namespace AutogenerateFixpack
 
         private void BtExcelFile_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Эксель файлы|*.xls*";
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "Эксель файлы|*.xls*"
+            };
 
             if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.excelPath))
             {
                 ofd.InitialDirectory = Properties.Settings.Default.excelPath;
             }
-
+            
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 TbExcelFile.Text = ofd.FileName;

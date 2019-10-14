@@ -275,11 +275,13 @@ namespace AutogenerateFixpack
 
         public static void SaveFileSc(DirectoryInfo fixpackDir, IEnumerable<string> text)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.DefaultExt = "txt";
-            sfd.Filter = "Текстовый файл|*.txt";
-            sfd.FileName = "file_sc";
-            sfd.InitialDirectory = fixpackDir.FullName;
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                DefaultExt = "txt",
+                Filter = "Текстовый файл|*.txt",
+                FileName = "file_sc",
+                InitialDirectory = fixpackDir.FullName
+            };
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
