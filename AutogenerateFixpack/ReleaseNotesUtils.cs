@@ -80,10 +80,10 @@ namespace AutogenerateFixpack
             }
         }    
         
-        public static void SetBeforeInstruction(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        public static bool SetBeforeInstruction(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
         {
             object objBookmark = "BEFORE_INSTRUCTIONS";
-            CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(226 + 0x100 * 239 + 0x10000 * 217), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(10, 1).Range);
+            return CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(226 + 0x100 * 239 + 0x10000 * 217), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(10, 1).Range);
         }
 
         public static void SetUninstall(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
@@ -98,7 +98,7 @@ namespace AutogenerateFixpack
             CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(217 + 0x100 * 226 + 0x10000 * 243), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(12, 1).Range);
         }
 
-        private static void CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
+        private static bool CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
         {
             if (!string.IsNullOrEmpty(rangeToCopy.Text.Replace("\r", "").Replace("\n", "").Replace("\a", "")))
             {
@@ -118,19 +118,20 @@ namespace AutogenerateFixpack
 
                 table.Shading.BackgroundPatternColor = color;
                 table.Cell(1, 1).Range.Text = before;
-
-                if (rangeToCopy != null)
-                {
-                    rangeToCopy.Copy();
-                    table.Cell(2, 1).Range.Paste();
-                }
+                
+                rangeToCopy.Copy();
+                table.Cell(2, 1).Range.Paste();
+                return true;
             }
+            return false;
         }
 
-        public static bool GenerateReleaseNotes(DirectoryInfo fixpackDir, List<DirectoryInfo> selectedPatches)
+        public static bool GenerateReleaseNotes(DirectoryInfo fixpackDir, List<DirectoryInfo> selectedPatches, out List<DirectoryInfo> beforeInstructionPatches)
         {
             if (wordApp == null)
                 wordApp = new Microsoft.Office.Interop.Word.Application();
+
+            beforeInstructionPatches = new List<DirectoryInfo>();
 
             FileInfo releaseNotesFile = new FileInfo(Path.Combine(fixpackDir.FullName, "release_notes.docx"));
             FileInfo releaseNotesFileSEED = new FileInfo("Release_Notes_SEED.docx");
@@ -176,7 +177,11 @@ namespace AutogenerateFixpack
                         SetPrerequisites(admReleaseNotes, devReleaseNotes, out prereqAdded);
                         prereqAddedOnce |= prereqAdded;
 
-                        SetBeforeInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
+                        if (SetBeforeInstruction(admReleaseNotes, devReleaseNotes, patchDirectory))
+                        {
+                            beforeInstructionPatches.Add(patchDirectory);
+                        }
+
                         SetAfterInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
                         SetUninstall(admReleaseNotes, devReleaseNotes, patchDirectory);
 

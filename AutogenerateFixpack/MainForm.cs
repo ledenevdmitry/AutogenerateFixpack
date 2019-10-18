@@ -39,21 +39,17 @@ namespace AutogenerateFixpack
             CbExcel.Checked = Properties.Settings.Default.excelFileChecked;
         }
 
-        delegate bool ScenarioGenerator(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches);
+        delegate bool ScenarioGenerator(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches);
 
         private void GenerateFixpack(ScenarioGenerator generator)
         {
             lbStatus.Text = "";
-            if (CbScenario.Checked)
-            {
-                generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList());
-                lbStatus.Text += "Файл сценария создан" + Environment.NewLine;
-            }
+            List<DirectoryInfo> beforeInstructionPatches = new List<DirectoryInfo>();
             if (CbRn.Checked)
             {
                 if (Directory.Exists(TbFPDir.Text))
                 {
-                    if (ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList()))
+                    if (ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(), out beforeInstructionPatches))
                     {
                         lbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
                     }
@@ -62,6 +58,13 @@ namespace AutogenerateFixpack
                 {
                     MessageBox.Show($"Папка с фикспаком {TbFPDir.Text} не найдена!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+            if (CbScenario.Checked)
+            {
+                generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(),
+                    //пустой список, если autowait отключен
+                    Properties.Settings.Default.autoWait ? beforeInstructionPatches : new List<DirectoryInfo>());
+                lbStatus.Text += "Файл сценария создан" + Environment.NewLine;
             }
             if (CbExcel.Checked)
             {
@@ -191,6 +194,12 @@ namespace AutogenerateFixpack
                     DialogResult dr = cf.ShowDialog();
                 }
             }
+        }
+
+        private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsForm sf = new SettingsForm();
+            sf.ShowDialog();
         }
     }
 }

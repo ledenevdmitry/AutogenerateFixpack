@@ -43,11 +43,14 @@
             this.LbPatches = new System.Windows.Forms.Label();
             this.lbStatus = new System.Windows.Forms.Label();
             this.BtCheckRelease = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // BtByFiles
             // 
-            this.BtByFiles.Location = new System.Drawing.Point(206, 67);
+            this.BtByFiles.Location = new System.Drawing.Point(206, 84);
             this.BtByFiles.Name = "BtByFiles";
             this.BtByFiles.Size = new System.Drawing.Size(134, 23);
             this.BtByFiles.TabIndex = 1;
@@ -57,7 +60,7 @@
             // 
             // BtByScenarios
             // 
-            this.BtByScenarios.Location = new System.Drawing.Point(346, 67);
+            this.BtByScenarios.Location = new System.Drawing.Point(346, 84);
             this.BtByScenarios.Name = "BtByScenarios";
             this.BtByScenarios.Size = new System.Drawing.Size(157, 23);
             this.BtByScenarios.TabIndex = 2;
@@ -67,14 +70,14 @@
             // 
             // TbFPDir
             // 
-            this.TbFPDir.Location = new System.Drawing.Point(128, 12);
+            this.TbFPDir.Location = new System.Drawing.Point(128, 29);
             this.TbFPDir.Name = "TbFPDir";
             this.TbFPDir.Size = new System.Drawing.Size(294, 20);
             this.TbFPDir.TabIndex = 3;
             // 
             // BtFPDir
             // 
-            this.BtFPDir.Location = new System.Drawing.Point(428, 12);
+            this.BtFPDir.Location = new System.Drawing.Point(428, 29);
             this.BtFPDir.Name = "BtFPDir";
             this.BtFPDir.Size = new System.Drawing.Size(75, 23);
             this.BtFPDir.TabIndex = 4;
@@ -85,7 +88,7 @@
             // LbFPDir
             // 
             this.LbFPDir.AutoSize = true;
-            this.LbFPDir.Location = new System.Drawing.Point(12, 12);
+            this.LbFPDir.Location = new System.Drawing.Point(12, 29);
             this.LbFPDir.Name = "LbFPDir";
             this.LbFPDir.Size = new System.Drawing.Size(70, 13);
             this.LbFPDir.TabIndex = 5;
@@ -94,7 +97,7 @@
             // LbExcelFile
             // 
             this.LbExcelFile.AutoSize = true;
-            this.LbExcelFile.Location = new System.Drawing.Point(12, 41);
+            this.LbExcelFile.Location = new System.Drawing.Point(12, 58);
             this.LbExcelFile.Name = "LbExcelFile";
             this.LbExcelFile.Size = new System.Drawing.Size(107, 13);
             this.LbExcelFile.TabIndex = 8;
@@ -102,7 +105,7 @@
             // 
             // BtExcelFile
             // 
-            this.BtExcelFile.Location = new System.Drawing.Point(428, 41);
+            this.BtExcelFile.Location = new System.Drawing.Point(428, 58);
             this.BtExcelFile.Name = "BtExcelFile";
             this.BtExcelFile.Size = new System.Drawing.Size(75, 23);
             this.BtExcelFile.TabIndex = 7;
@@ -112,7 +115,7 @@
             // 
             // TbExcelFile
             // 
-            this.TbExcelFile.Location = new System.Drawing.Point(128, 41);
+            this.TbExcelFile.Location = new System.Drawing.Point(128, 58);
             this.TbExcelFile.Name = "TbExcelFile";
             this.TbExcelFile.Size = new System.Drawing.Size(294, 20);
             this.TbExcelFile.TabIndex = 6;
@@ -120,7 +123,7 @@
             // LboxPatches
             // 
             this.LboxPatches.FormattingEnabled = true;
-            this.LboxPatches.Location = new System.Drawing.Point(149, 127);
+            this.LboxPatches.Location = new System.Drawing.Point(149, 144);
             this.LboxPatches.Name = "LboxPatches";
             this.LboxPatches.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.LboxPatches.Size = new System.Drawing.Size(342, 108);
@@ -131,7 +134,7 @@
             this.CbScenario.AutoSize = true;
             this.CbScenario.Checked = true;
             this.CbScenario.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CbScenario.Location = new System.Drawing.Point(15, 102);
+            this.CbScenario.Location = new System.Drawing.Point(15, 119);
             this.CbScenario.Name = "CbScenario";
             this.CbScenario.Size = new System.Drawing.Size(106, 17);
             this.CbScenario.TabIndex = 10;
@@ -143,7 +146,7 @@
             this.CbRn.AutoSize = true;
             this.CbRn.Checked = true;
             this.CbRn.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CbRn.Location = new System.Drawing.Point(15, 125);
+            this.CbRn.Location = new System.Drawing.Point(15, 142);
             this.CbRn.Name = "CbRn";
             this.CbRn.Size = new System.Drawing.Size(93, 17);
             this.CbRn.TabIndex = 11;
@@ -155,7 +158,7 @@
             this.CbExcel.AutoSize = true;
             this.CbExcel.Checked = true;
             this.CbExcel.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CbExcel.Location = new System.Drawing.Point(15, 148);
+            this.CbExcel.Location = new System.Drawing.Point(15, 165);
             this.CbExcel.Name = "CbExcel";
             this.CbExcel.Size = new System.Drawing.Size(75, 17);
             this.CbExcel.TabIndex = 12;
@@ -165,7 +168,7 @@
             // LbPatches
             // 
             this.LbPatches.AutoSize = true;
-            this.LbPatches.Location = new System.Drawing.Point(146, 102);
+            this.LbPatches.Location = new System.Drawing.Point(146, 119);
             this.LbPatches.Name = "LbPatches";
             this.LbPatches.Size = new System.Drawing.Size(159, 13);
             this.LbPatches.TabIndex = 13;
@@ -174,26 +177,43 @@
             // lbStatus
             // 
             this.lbStatus.AutoSize = true;
-            this.lbStatus.Location = new System.Drawing.Point(12, 168);
+            this.lbStatus.Location = new System.Drawing.Point(12, 185);
             this.lbStatus.Name = "lbStatus";
             this.lbStatus.Size = new System.Drawing.Size(0, 13);
             this.lbStatus.TabIndex = 14;
             // 
             // BtCheckRelease
             // 
-            this.BtCheckRelease.Location = new System.Drawing.Point(90, 67);
+            this.BtCheckRelease.Location = new System.Drawing.Point(66, 84);
             this.BtCheckRelease.Name = "BtCheckRelease";
-            this.BtCheckRelease.Size = new System.Drawing.Size(110, 23);
+            this.BtCheckRelease.Size = new System.Drawing.Size(134, 23);
             this.BtCheckRelease.TabIndex = 15;
             this.BtCheckRelease.Text = "Сверить релиз";
             this.BtCheckRelease.UseVisualStyleBackColor = true;
             this.BtCheckRelease.Click += new System.EventHandler(this.BtCheckRelease_Click);
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SettingsToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(512, 24);
+            this.menuStrip1.TabIndex = 16;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // SettingsToolStripMenuItem
+            // 
+            this.SettingsToolStripMenuItem.Name = "SettingsToolStripMenuItem";
+            this.SettingsToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
+            this.SettingsToolStripMenuItem.Text = "Настройки";
+            this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(512, 247);
+            this.ClientSize = new System.Drawing.Size(512, 264);
             this.Controls.Add(this.BtCheckRelease);
             this.Controls.Add(this.lbStatus);
             this.Controls.Add(this.LbPatches);
@@ -209,10 +229,14 @@
             this.Controls.Add(this.TbFPDir);
             this.Controls.Add(this.BtByScenarios);
             this.Controls.Add(this.BtByFiles);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Создание фикспака";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -234,6 +258,8 @@
         private System.Windows.Forms.Label LbPatches;
         private System.Windows.Forms.Label lbStatus;
         private System.Windows.Forms.Button BtCheckRelease;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;
     }
 }
 

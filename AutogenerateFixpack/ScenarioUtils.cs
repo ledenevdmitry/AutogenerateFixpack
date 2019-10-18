@@ -199,7 +199,7 @@ namespace AutogenerateFixpack
             return priority;
         }
 
-        public static bool CreateFPScenarioByFiles(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
+        public static bool CreateFPScenarioByFiles(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches)
         {
             List<string> newScenarioLines = new List<string>();
             foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
@@ -207,6 +207,11 @@ namespace AutogenerateFixpack
                 if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 {
                     SortedList<int, string> priorityLinePair = new SortedList<int, string>(new DuplicateKeyComparer<int>());
+
+                    if (beforeInstructionPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                    {
+                        newScenarioLines.Add($"WAIT||Выполнить Датафикс №{patchDirectory.Name}");
+                    }
 
                     foreach (FileInfo fileInfo in patchDirectory.EnumerateFiles("*.*", SearchOption.AllDirectories))
                     {
@@ -229,7 +234,7 @@ namespace AutogenerateFixpack
             return true;
         }
 
-        public static bool CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches)
+        public static bool CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches)
         {
             CheckFilesAndPatchScenario(fixpackDirectory, selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
 
@@ -263,6 +268,10 @@ namespace AutogenerateFixpack
                             string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                             List<string> listScenarioLines = currScenarioLines.ToList();
                             DefaultScenarioOrderValidation(listScenarioLines);
+                            if(beforeInstructionPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                            {
+                                newScenarioLines.Add($"WAIT||Выполнить Датафикс №{patchDirectory.Name}");
+                            }
                             newScenarioLines.AddRange(CreateNewScenarioLines(fixpackDirectory, patchDirectory, listScenarioLines));
                         }
                     }
@@ -303,7 +312,7 @@ namespace AutogenerateFixpack
         static Regex ORAPathFromScenarioLine  = new Regex(@"ORA\|\|(.*)\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex IPCPathFromScenarioLine = new Regex(@"IPC\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex STWFPathFromScenarioLine = new Regex(@"STWF\|\|(.*)", RegexOptions.IgnoreCase);
-        static Regex WrongFiles = new Regex(@"file_sc\.|RELEASE_NOTES\.|VSSVER2\.|\.xls|IVSS\.tmp", RegexOptions.IgnoreCase);
+        static Regex WrongFiles = new Regex(@"file_sc\.|RELEASE_NOTES\.|VSSVER2\.|\.xls|IVSS\.tmp|\\tablespace|\\user", RegexOptions.IgnoreCase);
 
         static Regex ORASchemaFromScenarioLine = new Regex(@"([^\\]+)@");
 
