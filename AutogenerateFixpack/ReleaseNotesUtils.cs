@@ -15,26 +15,6 @@ namespace AutogenerateFixpack
     {
         public static Microsoft.Office.Interop.Word.Application wordApp;
 
-        /*
-        private static void ReplaceWithStringValue(Document admReleaseNotes, string findWhat, string ReplaceWith)
-        {
-            object missing = System.Reflection.Missing.Value;
-
-            Range range = admReleaseNotes.Content;
-            Find find = range.Find;
-            find.Text = findWhat;
-            find.ClearFormatting();
-            find.Replacement.ClearFormatting();
-            find.Replacement.Text = ReplaceWith;
-
-            object replaceAll = WdReplace.wdReplaceAll;
-
-            find.Execute(ref missing, ref missing, ref missing, ref missing, ref missing,
-                ref missing, ref missing, ref missing, ref missing, ref missing,
-                ref replaceAll, ref missing, ref missing, ref missing, ref missing);
-        }
-        */
-
         private static void SetFixpackName(Document admReleaseNotes, DirectoryInfo fixpackDir)
         {
             object objBookmark = "FIXPACK_NAME";
@@ -100,7 +80,7 @@ namespace AutogenerateFixpack
 
         private static bool CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
         {
-            if (!string.IsNullOrEmpty(rangeToCopy.Text.Replace("\r", "").Replace("\n", "").Replace("\a", "")))
+            if (!string.IsNullOrWhiteSpace(rangeToCopy.Text.Replace("\r", "").Replace("\n", "").Replace("\a", "")))
             {
                 rangeWhere.InsertParagraphAfter();
                 rangeWhere = admReleaseNotes.Range(rangeWhere.End, rangeWhere.End);

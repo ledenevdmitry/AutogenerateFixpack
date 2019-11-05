@@ -29,6 +29,8 @@ namespace AutogenerateFixpack
         private void BtContinue_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
+            DeleteRows = CbDeleteRows.Checked;
+            AddRows = CbAddRows.Checked;
         }
 
         private void CheckForm_Resize(object sender, EventArgs e)
@@ -47,5 +49,8 @@ namespace AutogenerateFixpack
             BtAbort.Top = GbScenariosNotFound.Bottom + 8 / 2;
             BtContinue.Top = GbScenariosNotFound.Bottom + 8 / 2;
         }
+
+        public bool DeleteRows { get; private set; } = false;
+        public bool AddRows { get; private set; } = false;
     }
 }

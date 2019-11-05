@@ -36,6 +36,8 @@
             this.TbScenariosNotFound = new System.Windows.Forms.TextBox();
             this.BtAbort = new System.Windows.Forms.Button();
             this.BtContinue = new System.Windows.Forms.Button();
+            this.CbAddRows = new System.Windows.Forms.CheckBox();
+            this.CbDeleteRows = new System.Windows.Forms.CheckBox();
             this.GbFilesNotFound.SuspendLayout();
             this.GbLinesNotFound.SuspendLayout();
             this.GbScenariosNotFound.SuspendLayout();
@@ -48,7 +50,7 @@
             this.TbFilesNotFound.Multiline = true;
             this.TbFilesNotFound.Name = "TbFilesNotFound";
             this.TbFilesNotFound.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TbFilesNotFound.Size = new System.Drawing.Size(501, 98);
+            this.TbFilesNotFound.Size = new System.Drawing.Size(498, 98);
             this.TbFilesNotFound.TabIndex = 0;
             // 
             // GbFilesNotFound
@@ -56,7 +58,7 @@
             this.GbFilesNotFound.Controls.Add(this.TbFilesNotFound);
             this.GbFilesNotFound.Location = new System.Drawing.Point(12, 12);
             this.GbFilesNotFound.Name = "GbFilesNotFound";
-            this.GbFilesNotFound.Size = new System.Drawing.Size(507, 117);
+            this.GbFilesNotFound.Size = new System.Drawing.Size(504, 117);
             this.GbFilesNotFound.TabIndex = 1;
             this.GbFilesNotFound.TabStop = false;
             this.GbFilesNotFound.Text = "Ненайденные файлы";
@@ -103,7 +105,7 @@
             // 
             // BtAbort
             // 
-            this.BtAbort.Location = new System.Drawing.Point(149, 381);
+            this.BtAbort.Location = new System.Drawing.Point(15, 381);
             this.BtAbort.Name = "BtAbort";
             this.BtAbort.Size = new System.Drawing.Size(105, 32);
             this.BtAbort.TabIndex = 4;
@@ -113,7 +115,7 @@
             // 
             // BtContinue
             // 
-            this.BtContinue.Location = new System.Drawing.Point(260, 381);
+            this.BtContinue.Location = new System.Drawing.Point(126, 381);
             this.BtContinue.Name = "BtContinue";
             this.BtContinue.Size = new System.Drawing.Size(105, 32);
             this.BtContinue.TabIndex = 5;
@@ -121,11 +123,33 @@
             this.BtContinue.UseVisualStyleBackColor = true;
             this.BtContinue.Click += new System.EventHandler(this.BtContinue_Click);
             // 
+            // CbAddRows
+            // 
+            this.CbAddRows.AutoSize = true;
+            this.CbAddRows.Location = new System.Drawing.Point(237, 381);
+            this.CbAddRows.Name = "CbAddRows";
+            this.CbAddRows.Size = new System.Drawing.Size(185, 17);
+            this.CbAddRows.TabIndex = 7;
+            this.CbAddRows.Text = "Добавить ненайденные строки";
+            this.CbAddRows.UseVisualStyleBackColor = true;
+            // 
+            // CbDeleteRows
+            // 
+            this.CbDeleteRows.AutoSize = true;
+            this.CbDeleteRows.Location = new System.Drawing.Point(237, 396);
+            this.CbDeleteRows.Name = "CbDeleteRows";
+            this.CbDeleteRows.Size = new System.Drawing.Size(238, 17);
+            this.CbDeleteRows.TabIndex = 8;
+            this.CbDeleteRows.Text = "Удалить строки по ненайденным файлам";
+            this.CbDeleteRows.UseVisualStyleBackColor = true;
+            // 
             // CheckForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(531, 425);
+            this.Controls.Add(this.CbDeleteRows);
+            this.Controls.Add(this.CbAddRows);
             this.Controls.Add(this.BtContinue);
             this.Controls.Add(this.BtAbort);
             this.Controls.Add(this.GbScenariosNotFound);
@@ -141,6 +165,7 @@
             this.GbScenariosNotFound.ResumeLayout(false);
             this.GbScenariosNotFound.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -154,5 +179,7 @@
         private System.Windows.Forms.TextBox TbScenariosNotFound;
         private System.Windows.Forms.Button BtAbort;
         private System.Windows.Forms.Button BtContinue;
+        private System.Windows.Forms.CheckBox CbAddRows;
+        private System.Windows.Forms.CheckBox CbDeleteRows;
     }
 }

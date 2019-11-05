@@ -41,7 +41,7 @@
             this.CbRn = new System.Windows.Forms.CheckBox();
             this.CbExcel = new System.Windows.Forms.CheckBox();
             this.LbPatches = new System.Windows.Forms.Label();
-            this.lbStatus = new System.Windows.Forms.Label();
+            this.LbStatus = new System.Windows.Forms.Label();
             this.BtCheckRelease = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -176,11 +176,11 @@
             // 
             // lbStatus
             // 
-            this.lbStatus.AutoSize = true;
-            this.lbStatus.Location = new System.Drawing.Point(12, 185);
-            this.lbStatus.Name = "lbStatus";
-            this.lbStatus.Size = new System.Drawing.Size(0, 13);
-            this.lbStatus.TabIndex = 14;
+            this.LbStatus.AutoSize = true;
+            this.LbStatus.Location = new System.Drawing.Point(12, 185);
+            this.LbStatus.Name = "lbStatus";
+            this.LbStatus.Size = new System.Drawing.Size(0, 13);
+            this.LbStatus.TabIndex = 14;
             // 
             // BtCheckRelease
             // 
@@ -215,7 +215,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 264);
             this.Controls.Add(this.BtCheckRelease);
-            this.Controls.Add(this.lbStatus);
+            this.Controls.Add(this.LbStatus);
             this.Controls.Add(this.LbPatches);
             this.Controls.Add(this.CbExcel);
             this.Controls.Add(this.CbRn);
@@ -256,7 +256,7 @@
         private System.Windows.Forms.CheckBox CbRn;
         private System.Windows.Forms.CheckBox CbExcel;
         private System.Windows.Forms.Label LbPatches;
-        private System.Windows.Forms.Label lbStatus;
+        private System.Windows.Forms.Label LbStatus;
         private System.Windows.Forms.Button BtCheckRelease;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;

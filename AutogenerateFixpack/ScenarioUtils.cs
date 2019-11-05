@@ -87,7 +87,7 @@ namespace AutogenerateFixpack
                     {
                         if (scenarioFilePathes.Where(x => x.Equals(fileInfo.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() == 0)
                         {
-                            if (!WrongFiles.IsMatch(fileInfo.FullName))
+                            if (!WrongFiles.IsMatch(fileInfo.Name))
                             {
                                 string fromFPDirPath = fileInfo.FullName.Substring(fixpackDirectory.FullName.Length + 1);
                                 if (CreateScenarioLineByFromFPDirPath(fromFPDirPath, out string scenarioLine))
@@ -238,9 +238,11 @@ namespace AutogenerateFixpack
         {
             CheckFilesAndPatchScenario(fixpackDirectory, selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
 
-            if(scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0)
+            CheckForm cf = null;
+
+            if (scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0)
             {
-                CheckForm cf = new CheckForm(
+                cf = new CheckForm(
                     string.Join(Environment.NewLine, scenarioNotFound),
                     string.Join(Environment.NewLine, filesNotFound),
                     string.Join(Environment.NewLine, linesNotFound));
@@ -268,6 +270,7 @@ namespace AutogenerateFixpack
                             string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                             List<string> listScenarioLines = currScenarioLines.ToList();
                             DefaultScenarioOrderValidation(listScenarioLines);
+
                             if(beforeInstructionPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                             {
                                 newScenarioLines.Add($"WAIT||Выполнить Датафикс №{patchDirectory.Name}");
@@ -277,7 +280,35 @@ namespace AutogenerateFixpack
                     }
                 }
             }
-            
+
+            if (cf != null && cf.DeleteRows)
+            {
+                newScenarioLines.RemoveAll(x => filesNotFound.Contains(x, StringComparer.InvariantCultureIgnoreCase));
+            }
+
+            int newScenarioLinesCount = newScenarioLines.Count;
+            if (cf != null && cf.AddRows)
+            {
+                for(int i = 0; i < newScenarioLinesCount; ++i)
+                {
+                    int j;
+                    for (j = 0; j < linesNotFound.Count; ++j)
+                    {
+                        //если папки совпадают, вставляем по приоритету
+                        if (FolderFromNewScenarioLine.Match(newScenarioLines[i]).Value.Equals(FolderFromNewScenarioLine.Match(linesNotFound[j]).Value))
+                        {
+                            if(Priority(newScenarioLines[i]) > Priority(linesNotFound[j]))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    newScenarioLines.Insert(i, linesNotFound[j]);
+                    ++i;
+                    ++newScenarioLinesCount;
+                }
+            }
+
             SaveFileSc(fixpackDirectory, newScenarioLines);
             return true;
         }
@@ -313,7 +344,7 @@ namespace AutogenerateFixpack
         static Regex IPCPathFromScenarioLine = new Regex(@"IPC\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex STWFPathFromScenarioLine = new Regex(@"STWF\|\|(.*)", RegexOptions.IgnoreCase);
         static Regex WrongFiles = new Regex(@"file_sc\.|RELEASE_NOTES\.|VSSVER2\.|\.xls|IVSS\.tmp|\\tablespace|\\user", RegexOptions.IgnoreCase);
-
+        static Regex FolderFromNewScenarioLine = new Regex(@"\|\|([^\\]+)\\");
         static Regex ORASchemaFromScenarioLine = new Regex(@"([^\\]+)@");
 
         private static string FPScenarioLineByPatchScenarioLine(string patchScenarioLine, DirectoryInfo patchDir, int pathIndex)
@@ -328,20 +359,23 @@ namespace AutogenerateFixpack
             List<string> newScenarioLines = new List<string>();
             for (int i = 2; i < oldScenarioLines.Count; ++i)
             {
-                MatchCollection ORAMatches = ORAPathFromScenarioLine.Matches(oldScenarioLines[i]);
-                MatchCollection IPCMatches = IPCPathFromScenarioLine.Matches(oldScenarioLines[i]);
-                MatchCollection STWFMatches = STWFPathFromScenarioLine.Matches(oldScenarioLines[i]);
-
-                MatchCollection mainMatchCollection =
-                    ORAMatches.Count  > 0 ? ORAMatches :
-                    IPCMatches.Count  > 0 ? IPCMatches :
-                    STWFMatches.Count > 0 ? STWFMatches : null;
-
-                if (mainMatchCollection != null)
+                if (!WrongFiles.IsMatch(oldScenarioLines[i]))
                 {
-                    int insertIndex = mainMatchCollection[0].Groups[1].Index;
-                    string fpScenarioLine = FPScenarioLineByPatchScenarioLine(oldScenarioLines[i], patchDir, insertIndex);
-                    newScenarioLines.Add(fpScenarioLine);
+                    MatchCollection ORAMatches = ORAPathFromScenarioLine.Matches(oldScenarioLines[i]);
+                    MatchCollection IPCMatches = IPCPathFromScenarioLine.Matches(oldScenarioLines[i]);
+                    MatchCollection STWFMatches = STWFPathFromScenarioLine.Matches(oldScenarioLines[i]);
+
+                    MatchCollection mainMatchCollection =
+                        ORAMatches.Count > 0 ? ORAMatches :
+                        IPCMatches.Count > 0 ? IPCMatches :
+                        STWFMatches.Count > 0 ? STWFMatches : null;
+
+                    if (mainMatchCollection != null)
+                    {
+                        int insertIndex = mainMatchCollection[0].Groups[1].Index;
+                        string fpScenarioLine = FPScenarioLineByPatchScenarioLine(oldScenarioLines[i], patchDir, insertIndex);
+                        newScenarioLines.Add(fpScenarioLine);
+                    }
                 }
             }
             return newScenarioLines;

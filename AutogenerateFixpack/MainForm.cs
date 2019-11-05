@@ -41,9 +41,9 @@ namespace AutogenerateFixpack
 
         delegate bool ScenarioGenerator(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches);
 
-        private void GenerateFixpack(ScenarioGenerator generator)
+        private void GenerateFixpack(ScenarioGenerator Generator)
         {
-            lbStatus.Text = "";
+            LbStatus.Text = "";
             List<DirectoryInfo> beforeInstructionPatches = new List<DirectoryInfo>();
             if (CbRn.Checked)
             {
@@ -51,7 +51,7 @@ namespace AutogenerateFixpack
                 {
                     if (ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(), out beforeInstructionPatches))
                     {
-                        lbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
+                        LbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
                     }
                 }
                 else
@@ -61,24 +61,24 @@ namespace AutogenerateFixpack
             }
             if (CbScenario.Checked)
             {
-                generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(),
+                Generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(),
                     //пустой список, если autowait отключен
                     Properties.Settings.Default.autoWait ? beforeInstructionPatches : new List<DirectoryInfo>());
-                lbStatus.Text += "Файл сценария создан" + Environment.NewLine;
+                LbStatus.Text += "Файл сценария создан" + Environment.NewLine;
             }
             if (CbExcel.Checked)
             {
                 if (File.Exists(TbExcelFile.Text))
                 {
                     ExcelUtils.PrepareExcelFile(new FileInfo(TbExcelFile.Text), new DirectoryInfo(TbFPDir.Text));
-                    lbStatus.Text += "Эксель-файл создан" + Environment.NewLine;
+                    LbStatus.Text += "Эксель-файл создан" + Environment.NewLine;
                 }
                 else
                 {
                     MessageBox.Show($"Исходный эксель файл {TbExcelFile.Text} не найден!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            lbStatus.Text += "Готово!";
+            LbStatus.Text += "Готово!";
         }
 
         private void BtByFiles_Click(object sender, EventArgs e)
