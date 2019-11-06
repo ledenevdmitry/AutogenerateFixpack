@@ -48,6 +48,9 @@ namespace AutogenerateFixpack
 
             BtAbort.Top = GbScenariosNotFound.Bottom + 8 / 2;
             BtContinue.Top = GbScenariosNotFound.Bottom + 8 / 2;
+
+            CbAddRows.Top = GbScenariosNotFound.Bottom + 8 / 2;
+            CbDeleteRows.Top = CbAddRows.Bottom;
         }
 
         public bool DeleteRows { get; private set; } = false;

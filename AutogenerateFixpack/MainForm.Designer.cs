@@ -164,6 +164,7 @@
             this.CbExcel.TabIndex = 12;
             this.CbExcel.Text = "Экселька";
             this.CbExcel.UseVisualStyleBackColor = true;
+            this.CbExcel.CheckedChanged += new System.EventHandler(this.CbExcel_CheckedChanged);
             // 
             // LbPatches
             // 
@@ -174,11 +175,11 @@
             this.LbPatches.TabIndex = 13;
             this.LbPatches.Text = "Участвующие в сборке патчи:";
             // 
-            // lbStatus
+            // LbStatus
             // 
             this.LbStatus.AutoSize = true;
             this.LbStatus.Location = new System.Drawing.Point(12, 185);
-            this.LbStatus.Name = "lbStatus";
+            this.LbStatus.Name = "LbStatus";
             this.LbStatus.Size = new System.Drawing.Size(0, 13);
             this.LbStatus.TabIndex = 14;
             // 

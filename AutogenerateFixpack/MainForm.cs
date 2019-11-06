@@ -201,5 +201,10 @@ namespace AutogenerateFixpack
             SettingsForm sf = new SettingsForm();
             sf.ShowDialog();
         }
+
+        private void CbExcel_CheckedChanged(object sender, EventArgs e)
+        {
+            LbExcelFile.Visible = TbExcelFile.Visible = BtExcelFile.Visible = CbExcel.Checked;
+        }
     }
 }

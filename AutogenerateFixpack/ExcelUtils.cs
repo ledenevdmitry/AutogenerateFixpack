@@ -52,7 +52,7 @@ namespace AutogenerateFixpack
             
             string filename = Path.Combine(fixpackDir.Parent.FullName, CRegex.Match(fixpackDir.Name).Groups[1].Value) + ".xlsx";
 
-            workbook.SaveAs(filename, XlFileFormat.xlOpenXMLWorkbook, Type.Missing, Type.Missing, true, false, XlSaveAsAccessMode.xlNoChange, XlSaveConflictResolution.xlLocalSessionChanges, Type.Missing, Type.Missing);
+            workbook.SaveAs(filename, XlFileFormat.xlOpenXMLWorkbook, Type.Missing, Type.Missing, true, false, XlSaveAsAccessMode.xlShared, XlSaveConflictResolution.xlLocalSessionChanges, Type.Missing, Type.Missing);
 
             FileInfo resExcelFile = new FileInfo(filename);
 

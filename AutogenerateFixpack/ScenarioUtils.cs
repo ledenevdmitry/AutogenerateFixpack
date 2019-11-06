@@ -122,78 +122,95 @@ namespace AutogenerateFixpack
         public static int Priority(string line)
         {
             int priority = 0;
+            //папки
+            if (line.IndexOf("\\DWI", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 1;
+            else if (line.IndexOf("\\SRC001_ODS", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 2;
+            else if (line.IndexOf("\\DWS", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 3;
+            else if (line.IndexOf("\\OP_USER", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 4;
+            else if (line.IndexOf("\\STG", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 5;
+            else if (line.IndexOf("\\DWH", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 6;
+            else if (line.IndexOf("\\UM", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 7;
+            else if (line.IndexOf("\\FLOW_CONTROL", StringComparison.InvariantCultureIgnoreCase) != -1)
+                priority += 8;
 
             //скрипты
-            if (line.IndexOf("||DB_SCRIPT", StringComparison.InvariantCultureIgnoreCase) != -1)
+            if (line.IndexOf("\\DB_SCRIPT", StringComparison.InvariantCultureIgnoreCase) != -1)
             {
-                priority += 1000;
+                priority += 10000;
 
                 //порядок в скриптах
                 if (line.IndexOf("\\SEQUENCE", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 5;
+                    priority += 50;
                 else if (line.IndexOf("\\TABLE", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 10;
+                    priority += 100;
                 else if (line.IndexOf("\\INDEX", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 15;
+                    priority += 150;
                 else if (line.IndexOf("\\VIEW", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 20;
+                    priority += 200;
                 else if (line.IndexOf("\\FUNCTION", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 25;
+                    priority += 250;
                 else if (line.IndexOf("\\PROCEDURE", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 30;
+                    priority += 300;
                 else if (line.IndexOf("\\PACKAGE", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 35;
+                    priority += 350;
                 else if (line.IndexOf("\\SCRIPT", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 40;
+                    priority += 400;
 
                 //DBATOOLS в конец скриптов
                 if (line.IndexOf("\\DBATOOLS", StringComparison.InvariantCultureIgnoreCase) != -1)
                 {
-                    priority += 100;
+                    priority += 1000;
                 }
             }
 
             //информатика
-            else if (line.IndexOf("||INFA_XML", StringComparison.InvariantCultureIgnoreCase) != -1)
+            else if (line.IndexOf("\\INFA_XML", StringComparison.InvariantCultureIgnoreCase) != -1)
             {
-                priority += 2000;
+                priority += 20000;
 
                 //сначала shared
                 if (line.IndexOf("\\SHARED", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 100;
-                else priority += 200;
+                    priority += 1000;
+                else priority += 2000;
 
                 //порядок в информатике 
                 if (line.IndexOf("\\SOURCE", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 5;
-                else if (line.IndexOf("\\TARGET", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 10;
-                else if (line.IndexOf("\\USER-DEFINED FUNCTION", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 15;
-                else if (line.IndexOf("\\EXP_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 20;
-                else if (line.IndexOf("\\SEQ_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 25;
-                else if (line.IndexOf("\\LKP_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 30;
-                else if (line.IndexOf("\\MPL_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 35;
-                else if (line.IndexOf("\\M_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 40;
-                else if (line.IndexOf("\\CMD_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 45;
-                else if (line.IndexOf("\\S_", StringComparison.InvariantCultureIgnoreCase) != -1)
                     priority += 50;
+                else if (line.IndexOf("\\TARGET", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 100;
+                else if (line.IndexOf("\\USER-DEFINED FUNCTION", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 150;
+                else if (line.IndexOf("\\EXP_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 200;
+                else if (line.IndexOf("\\SEQ_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 250;
+                else if (line.IndexOf("\\LKP_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 300;
+                else if (line.IndexOf("\\MPL_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 350;
+                else if (line.IndexOf("\\M_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 400;
+                else if (line.IndexOf("\\CMD_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 450;
+                else if (line.IndexOf("\\S_", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    priority += 500;
                 else if (line.IndexOf("\\WKLT_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 55;
+                    priority += 550;
                 else if (line.IndexOf("\\WF_", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    priority += 60;
+                    priority += 600;
             }
 
             //старты потоков
-            else if (line.IndexOf("||START_WF") != -1)
+            else if (line.IndexOf("\\START_WF") != -1)
             {
-                priority += 3000;
+                priority += 30000;
             }
 
             return priority;
@@ -270,12 +287,42 @@ namespace AutogenerateFixpack
                             string[] currScenarioLines = currScenario.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                             List<string> listScenarioLines = currScenarioLines.ToList();
                             DefaultScenarioOrderValidation(listScenarioLines);
+                            List<string> newPatchScenarioLines = new List<string>();
 
-                            if(beforeInstructionPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                            newPatchScenarioLines = CreateNewScenarioLines(fixpackDirectory, patchDirectory, listScenarioLines);
+
+                            if (beforeInstructionPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                             {
-                                newScenarioLines.Add($"WAIT||Выполнить Датафикс №{patchDirectory.Name}");
+                                newPatchScenarioLines.Insert(0, $"WAIT||Выполнить Датафикс №{patchDirectory.Name}");
                             }
-                            newScenarioLines.AddRange(CreateNewScenarioLines(fixpackDirectory, patchDirectory, listScenarioLines));
+
+                            if (cf != null && cf.AddRows)
+                            {
+                                for (int j = 0; j < linesNotFound.Count; ++j)
+                                {
+                                    if (FolderFromNewScenarioLine.Match(linesNotFound[j]).Groups[1].Value.Equals(patchDirectory.Name, StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        bool lineAdded = false;
+                                        for (int i = 0; i < newPatchScenarioLines.Count; ++i)
+                                        {
+                                            int p1 = Priority(linesNotFound[j]);
+                                            int p2 = Priority(newPatchScenarioLines[i]);
+                                            //сначала по приоритету, при равенстве - по алфавиту
+                                            if (p1 < p2 || p1 == p2 && linesNotFound[j].CompareTo(newPatchScenarioLines[i]) < 0)
+                                            {
+                                                newPatchScenarioLines.Insert(i, linesNotFound[j]);
+                                                lineAdded = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!lineAdded)
+                                        {
+                                            newPatchScenarioLines.Add(linesNotFound[j]);
+                                        }
+                                    }
+                                }
+                            }
+                            newScenarioLines.AddRange(newPatchScenarioLines);
                         }
                     }
                 }
@@ -284,30 +331,7 @@ namespace AutogenerateFixpack
             if (cf != null && cf.DeleteRows)
             {
                 newScenarioLines.RemoveAll(x => filesNotFound.Contains(x, StringComparer.InvariantCultureIgnoreCase));
-            }
-
-            int newScenarioLinesCount = newScenarioLines.Count;
-            if (cf != null && cf.AddRows)
-            {
-                for(int i = 0; i < newScenarioLinesCount; ++i)
-                {
-                    int j;
-                    for (j = 0; j < linesNotFound.Count; ++j)
-                    {
-                        //если папки совпадают, вставляем по приоритету
-                        if (FolderFromNewScenarioLine.Match(newScenarioLines[i]).Value.Equals(FolderFromNewScenarioLine.Match(linesNotFound[j]).Value))
-                        {
-                            if(Priority(newScenarioLines[i]) > Priority(linesNotFound[j]))
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    newScenarioLines.Insert(i, linesNotFound[j]);
-                    ++i;
-                    ++newScenarioLinesCount;
-                }
-            }
+            }            
 
             SaveFileSc(fixpackDirectory, newScenarioLines);
             return true;
