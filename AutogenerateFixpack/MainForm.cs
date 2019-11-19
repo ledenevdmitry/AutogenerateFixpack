@@ -17,14 +17,23 @@ namespace AutogenerateFixpack
         {
             InitializeComponent();
 
-            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.fixpackPath))
+            if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.excelPath))
             {
-                TbFPDir.Text = Properties.Settings.Default.fixpackPath;
+                if (File.Exists(Properties.Settings.Default.excelPath))
+                {
+                    FileInfo excelFilePrev = new FileInfo(Properties.Settings.Default.excelPath);
+                    DirectoryInfo excelDir = excelFilePrev.Directory;
+
+                    //выбираем последний эксель файл в папке
+                    FileInfo newExcelFile = excelDir.EnumerateFiles("*.xls*", SearchOption.TopDirectoryOnly).OrderByDescending(x => x.LastWriteTime).First();
+
+                    TbExcelFile.Text = newExcelFile.FullName;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.fixpackPath))
             {
-                TbExcelFile.Text = Properties.Settings.Default.excelPath;
+                TbFPDir.Text = Properties.Settings.Default.fixpackPath;
 
                 LboxPatches.Items.Clear();
                 foreach (DirectoryInfo directoryInfo in new DirectoryInfo(Properties.Settings.Default.fixpackPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
