@@ -208,7 +208,7 @@ namespace AutogenerateFixpack
             }
 
             //старты потоков
-            else if (line.IndexOf("\\START_WF") != -1)
+            else if (line.IndexOf("\\START_WF", StringComparison.InvariantCultureIgnoreCase) != -1)
             {
                 priority += 30000;
             }
