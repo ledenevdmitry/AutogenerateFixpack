@@ -45,14 +45,15 @@
             this.BtCheckRelease = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.SettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // BtByFiles
             // 
-            this.BtByFiles.Location = new System.Drawing.Point(206, 84);
+            this.BtByFiles.Location = new System.Drawing.Point(245, 84);
             this.BtByFiles.Name = "BtByFiles";
-            this.BtByFiles.Size = new System.Drawing.Size(134, 23);
+            this.BtByFiles.Size = new System.Drawing.Size(115, 23);
             this.BtByFiles.TabIndex = 1;
             this.BtByFiles.Text = "Создать по файлам патчей";
             this.BtByFiles.UseVisualStyleBackColor = true;
@@ -60,9 +61,9 @@
             // 
             // BtByScenarios
             // 
-            this.BtByScenarios.Location = new System.Drawing.Point(346, 84);
+            this.BtByScenarios.Location = new System.Drawing.Point(366, 84);
             this.BtByScenarios.Name = "BtByScenarios";
-            this.BtByScenarios.Size = new System.Drawing.Size(157, 23);
+            this.BtByScenarios.Size = new System.Drawing.Size(137, 23);
             this.BtByScenarios.TabIndex = 2;
             this.BtByScenarios.Text = "Создать по сценариям патчей";
             this.BtByScenarios.UseVisualStyleBackColor = true;
@@ -185,9 +186,9 @@
             // 
             // BtCheckRelease
             // 
-            this.BtCheckRelease.Location = new System.Drawing.Point(66, 84);
+            this.BtCheckRelease.Location = new System.Drawing.Point(132, 84);
             this.BtCheckRelease.Name = "BtCheckRelease";
-            this.BtCheckRelease.Size = new System.Drawing.Size(134, 23);
+            this.BtCheckRelease.Size = new System.Drawing.Size(107, 23);
             this.BtCheckRelease.TabIndex = 15;
             this.BtCheckRelease.Text = "Сверить релиз";
             this.BtCheckRelease.UseVisualStyleBackColor = true;
@@ -210,11 +211,21 @@
             this.SettingsToolStripMenuItem.Text = "Настройки";
             this.SettingsToolStripMenuItem.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(15, 84);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(111, 23);
+            this.button1.TabIndex = 17;
+            this.button1.Text = "Создать статус";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(512, 264);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.BtCheckRelease);
             this.Controls.Add(this.LbStatus);
             this.Controls.Add(this.LbPatches);
@@ -261,6 +272,7 @@
         private System.Windows.Forms.Button BtCheckRelease;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem SettingsToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
     }
 }
 

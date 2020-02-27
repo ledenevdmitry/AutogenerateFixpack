@@ -94,5 +94,17 @@ namespace AutogenerateFixpack.Properties {
                 this["autoWait"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string STABConnString {
+            get {
+                return ((string)(this["STABConnString"]));
+            }
+            set {
+                this["STABConnString"] = value;
+            }
+        }
     }
 }

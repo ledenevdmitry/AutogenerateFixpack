@@ -58,29 +58,34 @@ namespace AutogenerateFixpack
                     prereqAdded = true;
                 }
             }
-        }    
-        
-        public static bool SetBeforeInstruction(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        }
+
+        private static bool IsRangeEmpty(Range rangeToCopy)
+        {
+            return string.IsNullOrWhiteSpace(rangeToCopy.Text.Replace("\r", "").Replace("\n", "").Replace("\a", ""));
+        }
+
+        public static bool SetBeforeInstruction(int orderNum, Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
         {
             object objBookmark = "BEFORE_INSTRUCTIONS";
-            return CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(226 + 0x100 * 239 + 0x10000 * 217), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(10, 1).Range);
+            return CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(226 + 0x100 * 239 + 0x10000 * 217), $"{orderNum}. Инструкция №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(10, 1).Range);
         }
 
-        public static void SetUninstall(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        public static bool SetUninstall(int orderNum, Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
         {
             object objBookmark = "UNINSTALL";
-            CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(255 + 0x100 * 242 + 0x10000 * 204), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(8, 1).Range);
+            return CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(255 + 0x100 * 242 + 0x10000 * 204), $"{orderNum}. Инструкция по деинсталляции №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(8, 1).Range);
         }
 
-        public static void SetAfterInstruction(Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
+        public static bool SetAfterInstruction(int orderNum, Document admReleaseNotes, Document devReleaseNotes, DirectoryInfo patchDir)
         {
             object objBookmark = "AFTER_INSTRUCTIONS";
-            CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(217 + 0x100 * 226 + 0x10000 * 243), $"Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(12, 1).Range);
+            return CreateTable(admReleaseNotes, admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range, (WdColor)(217 + 0x100 * 226 + 0x10000 * 243), $"{orderNum}. Датафикс №{patchDir.Name}", devReleaseNotes.Tables[1].Cell(12, 1).Range);
         }
 
         private static bool CreateTable(Document admReleaseNotes, Range rangeWhere, WdColor color, string before, Range rangeToCopy)
         {
-            if (!string.IsNullOrWhiteSpace(rangeToCopy.Text.Replace("\r", "").Replace("\n", "").Replace("\a", "")))
+            if (!IsRangeEmpty(rangeToCopy))
             {
                 rangeWhere.InsertParagraphAfter();
                 rangeWhere = admReleaseNotes.Range(rangeWhere.End, rangeWhere.End);
@@ -98,7 +103,9 @@ namespace AutogenerateFixpack
 
                 table.Shading.BackgroundPatternColor = color;
                 table.Cell(1, 1).Range.Text = before;
-                
+
+                rangeToCopy.HighlightColorIndex = WdColorIndex.wdNoHighlight;
+
                 rangeToCopy.Copy();
                 table.Cell(2, 1).Range.Paste();
                 return true;
@@ -120,7 +127,7 @@ namespace AutogenerateFixpack
 
             if (File.Exists(releaseNotesFile.FullName))
             {
-                result = MessageBox.Show("Файл release_notes.docx существует. Пересоздать?", "Предупреждение", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
+                result = MessageBox.Show("Файл release_notes.docx существует. Пересоздать?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
                 if (result == DialogResult.Yes)
                 {
@@ -142,35 +149,94 @@ namespace AutogenerateFixpack
                 SetDate(admReleaseNotes);
                 SetAdminName(admReleaseNotes);
 
-                List<DirectoryInfo> backwardSortedDirList = fixpackDir.GetDirectories().ToList();
-                backwardSortedDirList.Sort((x, y) => -x.Name.CompareTo(y.Name));
+                List<DirectoryInfo> patchDirectories = fixpackDir.GetDirectories().ToList();
 
                 bool prereqAdded = false;
                 bool prereqAddedOnce = false;
+
+                int beforeCounter = 0;
+                int afterCounter = 0;
+                int uninstallCounter = 0;
+
+                foreach (DirectoryInfo patchDirectory in patchDirectories)
+                {
+                    if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
+                    {
+                        string releaseNotesPath = Path.Combine(patchDirectory.FullName, "release_notes.docx");
+                        if (File.Exists(releaseNotesPath))
+                        {
+                            Document devReleaseNotes = wordApp.Documents.Open(releaseNotesPath, System.Type.Missing, true);
+
+                            if (!IsRangeEmpty(devReleaseNotes.Tables[1].Cell(10, 1).Range))
+                            {
+                                beforeCounter++;
+                            }
+
+                            if (!IsRangeEmpty(devReleaseNotes.Tables[1].Cell(12, 1).Range))
+                            {
+                                afterCounter++;
+                            }
+
+                            if (!IsRangeEmpty(devReleaseNotes.Tables[1].Cell(8, 1).Range))
+                            {
+                                uninstallCounter++;
+                            }
+
+                            devReleaseNotes.Close();
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Файл {releaseNotesPath} не найден!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                }
+
+                List<DirectoryInfo> backwardSortedDirList = fixpackDir.GetDirectories().ToList();
+                backwardSortedDirList.Sort((x, y) => -x.Name.CompareTo(y.Name));
+
+                object objBookmark = "BEFORE_INSTRUCTIONS";
+                Range range = admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range;
+                range.Text = $"{beforeCounter + 1}. Установить патч согласно file_sc.txt";
 
                 foreach (DirectoryInfo patchDirectory in backwardSortedDirList)
                 {
                     if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                     {
-                        Document devReleaseNotes = wordApp.Documents.Open(Path.Combine(patchDirectory.FullName, "release_notes.docx"), System.Type.Missing, true);
-
-                        SetPrerequisites(admReleaseNotes, devReleaseNotes, out prereqAdded);
-                        prereqAddedOnce |= prereqAdded;
-
-                        if (SetBeforeInstruction(admReleaseNotes, devReleaseNotes, patchDirectory))
+                        string releaseNotesPath = Path.Combine(patchDirectory.FullName, "release_notes.docx");
+                        if (File.Exists(releaseNotesPath))
                         {
-                            beforeInstructionPatches.Add(patchDirectory);
+                            Document devReleaseNotes = wordApp.Documents.Open(releaseNotesPath, System.Type.Missing, true);
+
+                            SetPrerequisites(admReleaseNotes, devReleaseNotes, out prereqAdded);
+                            prereqAddedOnce |= prereqAdded;
+
+                            if (SetBeforeInstruction(beforeCounter, admReleaseNotes, devReleaseNotes, patchDirectory))
+                            {
+                                beforeInstructionPatches.Add(patchDirectory);
+                                beforeCounter--;
+                            }
+
+                            if (SetAfterInstruction(afterCounter, admReleaseNotes, devReleaseNotes, patchDirectory))
+                            {
+                                afterCounter--;
+                            }
+
+                            if(SetUninstall(uninstallCounter, admReleaseNotes, devReleaseNotes, patchDirectory))
+                            {
+                                uninstallCounter--;
+                            }
+
+                            devReleaseNotes.Close(WdSaveOptions.wdDoNotSaveChanges);
                         }
-
-                        SetAfterInstruction(admReleaseNotes, devReleaseNotes, patchDirectory);
-                        SetUninstall(admReleaseNotes, devReleaseNotes, patchDirectory);
-
-                        devReleaseNotes.Close();
+                        else
+                        {
+                            MessageBox.Show($"Файл {releaseNotesPath} не найден!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
                 }
 
-                object objBookmark = "PREREQUISITES";
-                Range range = admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range;
+                objBookmark = "PREREQUISITES";
+                range = admReleaseNotes.Bookmarks.get_Item(ref objBookmark).Range;
                 if (!prereqAddedOnce)
                 {
                     range.Text = "-";

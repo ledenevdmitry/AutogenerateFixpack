@@ -16,11 +16,13 @@ namespace AutogenerateFixpack
         {
             InitializeComponent();
             CbAddWaits.Checked = Properties.Settings.Default.autoWait;
+            TbSTABConnString.Text = Properties.Settings.Default.STABConnString;
         }
 
         private void BtSubmit_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.autoWait = CbAddWaits.Checked;
+            Properties.Settings.Default.STABConnString = TbSTABConnString.Text;
             Properties.Settings.Default.Save();
 
             DialogResult = DialogResult.OK;

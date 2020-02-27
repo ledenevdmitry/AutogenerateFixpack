@@ -33,11 +33,13 @@ namespace AutogenerateFixpack
             return false;
         }
 
-        public static void CheckFilesAndPatchScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound)
+        public static void CheckFilesAndPatchScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound, out List<string> objectDuplications)
         {
             scenarioNotFound = new List<string>();
             filesNotFound = new List<string>();
             linesNotFound = new List<string>();
+            objectDuplications = new List<string>();
+            Dictionary<string, List<string>> objectDict = new Dictionary<string, List<string>>();
 
             foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
             {
@@ -72,6 +74,19 @@ namespace AutogenerateFixpack
                                 if (mainMatchCollection != null)
                                 {
                                     string fullPath = Path.Combine(patchDirectory.FullName, mainMatchCollection[0].Groups[1].Value);
+                                    string fileName = new FileInfo(fullPath).Name.ToUpper();
+
+                                    if(objectDict.ContainsKey(fileName))
+                                    {
+                                        objectDict[fileName].Add(fullPath);
+                                    }
+                                    else
+                                    {
+                                        List<string> list = new List<string>();
+                                        list.Add(fullPath);
+                                        objectDict.Add(fileName, list);
+                                    }
+
                                     scenarioFilePathes.Add(fullPath.Trim());
                                     if (!File.Exists(fullPath))
                                     {
@@ -100,6 +115,17 @@ namespace AutogenerateFixpack
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            foreach (var list in objectDict.Values)
+            {
+                if (list.Count > 1)
+                {
+                    foreach (var item in list)
+                    {
+                        objectDuplications.Add(item);
                     }
                 }
             }
@@ -253,16 +279,17 @@ namespace AutogenerateFixpack
 
         public static bool CreateFPScenarioByPatchesScenario(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches)
         {
-            CheckFilesAndPatchScenario(fixpackDirectory, selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
+            CheckFilesAndPatchScenario(fixpackDirectory, selectedPatches, out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound, out List<string> objectDuplications);
 
             CheckForm cf = null;
 
-            if (scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0)
+            if (scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0 || objectDuplications.Count > 0)
             {
                 cf = new CheckForm(
                     string.Join(Environment.NewLine, scenarioNotFound),
                     string.Join(Environment.NewLine, filesNotFound),
-                    string.Join(Environment.NewLine, linesNotFound));
+                    string.Join(Environment.NewLine, linesNotFound),
+                    string.Join(Environment.NewLine, objectDuplications));
 
                 DialogResult dr = cf.ShowDialog();
 

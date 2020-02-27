@@ -36,10 +36,13 @@ namespace AutogenerateFixpack
                 TbFPDir.Text = Properties.Settings.Default.fixpackPath;
 
                 LboxPatches.Items.Clear();
-                foreach (DirectoryInfo directoryInfo in new DirectoryInfo(Properties.Settings.Default.fixpackPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+                if (Directory.Exists(Properties.Settings.Default.fixpackPath))
                 {
-                    LboxPatches.Items.Add(directoryInfo);
-                    LboxPatches.SelectedItem = directoryInfo;
+                    foreach (DirectoryInfo directoryInfo in new DirectoryInfo(Properties.Settings.Default.fixpackPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+                    {
+                        LboxPatches.Items.Add(directoryInfo);
+                        LboxPatches.SelectedItem = directoryInfo;
+                    }
                 }
             }
 
@@ -54,40 +57,51 @@ namespace AutogenerateFixpack
         {
             LbStatus.Text = "";
             List<DirectoryInfo> beforeInstructionPatches = new List<DirectoryInfo>();
-            if (CbRn.Checked)
+
+            if (Directory.Exists(TbFPDir.Text))
             {
-                if (Directory.Exists(TbFPDir.Text))
+                foreach(DirectoryInfo subdir in new DirectoryInfo(TbFPDir.Text).EnumerateDirectories("*", SearchOption.AllDirectories))
                 {
-                    if (ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(), out beforeInstructionPatches))
+                    if(subdir.Name.IndexOf("004") != -1)
                     {
-                        LbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
+                        MessageBox.Show("Требуется проверить пререквизиты DWDICT!", "Предупреждение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        break;
                     }
                 }
-                else
+                if (CbRn.Checked)
                 {
-                    MessageBox.Show($"Папка с фикспаком {TbFPDir.Text} не найдена!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    {
+                        if (ReleaseNotesUtils.GenerateReleaseNotes(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(), out beforeInstructionPatches))
+                        {
+                            LbStatus.Text += "ReleaseNotes создан" + Environment.NewLine;
+                        }
+                    }
                 }
+                if (CbScenario.Checked)
+                {
+                    Generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(),
+                        //пустой список, если autowait отключен
+                        Properties.Settings.Default.autoWait ? beforeInstructionPatches : new List<DirectoryInfo>());
+                    LbStatus.Text += "Файл сценария создан" + Environment.NewLine;
+                }
+                if (CbExcel.Checked)
+                {
+                    if (File.Exists(TbExcelFile.Text))
+                    {
+                        ExcelUtils.PrepareExcelFileFixpack(new FileInfo(TbExcelFile.Text), new DirectoryInfo(TbFPDir.Text));
+                        LbStatus.Text += "Эксель-файл создан" + Environment.NewLine;
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Исходный эксель файл {TbExcelFile.Text} не найден!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                LbStatus.Text += "Готово!";
             }
-            if (CbScenario.Checked)
+            else
             {
-                Generator(new DirectoryInfo(TbFPDir.Text), LboxPatches.SelectedItems.Cast<DirectoryInfo>().ToList(),
-                    //пустой список, если autowait отключен
-                    Properties.Settings.Default.autoWait ? beforeInstructionPatches : new List<DirectoryInfo>());
-                LbStatus.Text += "Файл сценария создан" + Environment.NewLine;
+                MessageBox.Show($"Папка с фикспаком {TbFPDir.Text} не найдена!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            if (CbExcel.Checked)
-            {
-                if (File.Exists(TbExcelFile.Text))
-                {
-                    ExcelUtils.PrepareExcelFile(new FileInfo(TbExcelFile.Text), new DirectoryInfo(TbFPDir.Text));
-                    LbStatus.Text += "Эксель-файл создан" + Environment.NewLine;
-                }
-                else
-                {
-                    MessageBox.Show($"Исходный эксель файл {TbExcelFile.Text} не найден!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            LbStatus.Text += "Готово!";
         }
 
         private void BtByFiles_Click(object sender, EventArgs e)
@@ -191,14 +205,15 @@ namespace AutogenerateFixpack
             {
                 DirectoryInfo releaseDir = new DirectoryInfo(fbd.SelectedPath);
 
-                ScenarioUtils.CheckFilesAndPatchScenario(releaseDir, releaseDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly).ToList(), out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound);
+                ScenarioUtils.CheckFilesAndPatchScenario(releaseDir, releaseDir.EnumerateDirectories("*", SearchOption.TopDirectoryOnly).ToList(), out List<string> scenarioNotFound, out List<string> filesNotFound, out List<string> linesNotFound, out List<string> objectDuplications);
 
                 if (scenarioNotFound.Count > 0 || filesNotFound.Count > 0 || linesNotFound.Count > 0)
                 {
                     CheckForm cf = new CheckForm(
                         string.Join(Environment.NewLine, scenarioNotFound),
                         string.Join(Environment.NewLine, filesNotFound),
-                        string.Join(Environment.NewLine, linesNotFound));
+                        string.Join(Environment.NewLine, linesNotFound), 
+                        "");
 
                     DialogResult dr = cf.ShowDialog();
                 }

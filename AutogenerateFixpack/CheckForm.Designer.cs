@@ -38,9 +38,12 @@
             this.BtContinue = new System.Windows.Forms.Button();
             this.CbAddRows = new System.Windows.Forms.CheckBox();
             this.CbDeleteRows = new System.Windows.Forms.CheckBox();
+            this.GbDuplications = new System.Windows.Forms.GroupBox();
+            this.TbObjectDuplications = new System.Windows.Forms.TextBox();
             this.GbFilesNotFound.SuspendLayout();
             this.GbLinesNotFound.SuspendLayout();
             this.GbScenariosNotFound.SuspendLayout();
+            this.GbDuplications.SuspendLayout();
             this.SuspendLayout();
             // 
             // TbFilesNotFound
@@ -105,7 +108,7 @@
             // 
             // BtAbort
             // 
-            this.BtAbort.Location = new System.Drawing.Point(15, 381);
+            this.BtAbort.Location = new System.Drawing.Point(18, 504);
             this.BtAbort.Name = "BtAbort";
             this.BtAbort.Size = new System.Drawing.Size(105, 32);
             this.BtAbort.TabIndex = 4;
@@ -115,7 +118,7 @@
             // 
             // BtContinue
             // 
-            this.BtContinue.Location = new System.Drawing.Point(126, 381);
+            this.BtContinue.Location = new System.Drawing.Point(129, 504);
             this.BtContinue.Name = "BtContinue";
             this.BtContinue.Size = new System.Drawing.Size(105, 32);
             this.BtContinue.TabIndex = 5;
@@ -126,7 +129,7 @@
             // CbAddRows
             // 
             this.CbAddRows.AutoSize = true;
-            this.CbAddRows.Location = new System.Drawing.Point(237, 381);
+            this.CbAddRows.Location = new System.Drawing.Point(240, 504);
             this.CbAddRows.Name = "CbAddRows";
             this.CbAddRows.Size = new System.Drawing.Size(185, 17);
             this.CbAddRows.TabIndex = 7;
@@ -136,18 +139,39 @@
             // CbDeleteRows
             // 
             this.CbDeleteRows.AutoSize = true;
-            this.CbDeleteRows.Location = new System.Drawing.Point(237, 396);
+            this.CbDeleteRows.Location = new System.Drawing.Point(240, 519);
             this.CbDeleteRows.Name = "CbDeleteRows";
             this.CbDeleteRows.Size = new System.Drawing.Size(238, 17);
             this.CbDeleteRows.TabIndex = 8;
             this.CbDeleteRows.Text = "Удалить строки по ненайденным файлам";
             this.CbDeleteRows.UseVisualStyleBackColor = true;
             // 
+            // GbDuplications
+            // 
+            this.GbDuplications.Controls.Add(this.TbObjectDuplications);
+            this.GbDuplications.Location = new System.Drawing.Point(15, 381);
+            this.GbDuplications.Name = "GbDuplications";
+            this.GbDuplications.Size = new System.Drawing.Size(507, 117);
+            this.GbDuplications.TabIndex = 9;
+            this.GbDuplications.TabStop = false;
+            this.GbDuplications.Text = "Повторяющиеся объекты";
+            // 
+            // TbObjectDuplications
+            // 
+            this.TbObjectDuplications.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TbObjectDuplications.Location = new System.Drawing.Point(3, 16);
+            this.TbObjectDuplications.Multiline = true;
+            this.TbObjectDuplications.Name = "TbObjectDuplications";
+            this.TbObjectDuplications.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TbObjectDuplications.Size = new System.Drawing.Size(501, 98);
+            this.TbObjectDuplications.TabIndex = 0;
+            // 
             // CheckForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(531, 425);
+            this.ClientSize = new System.Drawing.Size(531, 541);
+            this.Controls.Add(this.GbDuplications);
             this.Controls.Add(this.CbDeleteRows);
             this.Controls.Add(this.CbAddRows);
             this.Controls.Add(this.BtContinue);
@@ -164,6 +188,8 @@
             this.GbLinesNotFound.PerformLayout();
             this.GbScenariosNotFound.ResumeLayout(false);
             this.GbScenariosNotFound.PerformLayout();
+            this.GbDuplications.ResumeLayout(false);
+            this.GbDuplications.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -181,5 +207,7 @@
         private System.Windows.Forms.Button BtContinue;
         private System.Windows.Forms.CheckBox CbAddRows;
         private System.Windows.Forms.CheckBox CbDeleteRows;
+        private System.Windows.Forms.GroupBox GbDuplications;
+        private System.Windows.Forms.TextBox TbObjectDuplications;
     }
 }

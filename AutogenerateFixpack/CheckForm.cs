@@ -12,12 +12,13 @@ namespace AutogenerateFixpack
 {
     public partial class CheckForm : Form
     {
-        public CheckForm(string scenariosNotFound, string filesNotFound, string linesNotFound)
+        public CheckForm(string scenariosNotFound, string filesNotFound, string linesNotFound, string objectDuplications)
         {
             InitializeComponent();
             TbScenariosNotFound.Text = scenariosNotFound;
             TbFilesNotFound.Text = filesNotFound;
             TbLinesNotFound.Text = linesNotFound;
+            TbObjectDuplications.Text = objectDuplications;
             DialogResult = DialogResult.Abort;
         }
 
@@ -38,18 +39,21 @@ namespace AutogenerateFixpack
             GbFilesNotFound.Width = ClientRectangle.Width - 2 * 8;
             GbLinesNotFound.Width = ClientRectangle.Width - 2 * 8;
             GbScenariosNotFound.Width = ClientRectangle.Width - 2 * 8;
+            GbDuplications.Width = ClientRectangle.Width - 2 * 8;
 
-            GbFilesNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 3;
-            GbLinesNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 3;
-            GbScenariosNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 3;
+            GbFilesNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 4;
+            GbLinesNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 4;
+            GbScenariosNotFound.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 4;
+            GbDuplications.Height = (ClientRectangle.Height - BtAbort.Height - 4 * 8) / 4;
 
             GbLinesNotFound.Top = GbFilesNotFound.Bottom + 8;
             GbScenariosNotFound.Top = GbLinesNotFound.Bottom + 8;
+            GbDuplications.Top = GbScenariosNotFound.Bottom + 8;
 
-            BtAbort.Top = GbScenariosNotFound.Bottom + 8 / 2;
-            BtContinue.Top = GbScenariosNotFound.Bottom + 8 / 2;
+            BtAbort.Top = GbDuplications.Bottom + 8 / 2;
+            BtContinue.Top = GbDuplications.Bottom + 8 / 2;
 
-            CbAddRows.Top = GbScenariosNotFound.Bottom + 8 / 2;
+            CbAddRows.Top = GbDuplications.Bottom + 8 / 2;
             CbDeleteRows.Top = CbAddRows.Bottom;
         }
 
