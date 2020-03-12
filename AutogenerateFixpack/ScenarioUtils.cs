@@ -245,7 +245,12 @@ namespace AutogenerateFixpack
         public static bool CreateFPScenarioByFiles(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches)
         {
             List<string> newScenarioLines = new List<string>();
-            foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+
+            DirectoryInfo fixpackDir = new DirectoryInfo(Properties.Settings.Default.fixpackPath);
+            List<DirectoryInfo> patchDirectories = fixpackDir.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList();
+            patchDirectories.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            foreach (DirectoryInfo patchDirectory in patchDirectories)
             {
                 if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 {
@@ -253,7 +258,7 @@ namespace AutogenerateFixpack
 
                     if (beforeInstructionPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                     {
-                        newScenarioLines.Add($"WAIT||Выполнить Датафикс №{patchDirectory.Name}");
+                        newScenarioLines.Add($"WAIT||Выполнить инструкцию №{patchDirectory.Name}");
                     }
 
                     foreach (FileInfo fileInfo in patchDirectory.EnumerateFiles("*.*", SearchOption.AllDirectories))
@@ -301,7 +306,11 @@ namespace AutogenerateFixpack
 
             List<string> newScenarioLines = new List<string>();
 
-            foreach (DirectoryInfo patchDirectory in fixpackDirectory.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+            DirectoryInfo fixpackDir = new DirectoryInfo(Properties.Settings.Default.fixpackPath);
+            List<DirectoryInfo> patchDirectories = fixpackDir.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList();
+            patchDirectories.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+            foreach (DirectoryInfo patchDirectory in patchDirectories)
             {
                 if (selectedPatches.Where(x => x.FullName.Equals(patchDirectory.FullName, StringComparison.InvariantCultureIgnoreCase)).Count() > 0)
                 {

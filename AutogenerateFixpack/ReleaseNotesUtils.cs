@@ -105,6 +105,7 @@ namespace AutogenerateFixpack
                 table.Cell(1, 1).Range.Text = before;
 
                 rangeToCopy.HighlightColorIndex = WdColorIndex.wdNoHighlight;
+                //rangeToCopy.Shading.BackgroundPatternColorIndex = WdColorIndex.wdNoHighlight;
 
                 rangeToCopy.Copy();
                 table.Cell(2, 1).Range.Paste();

@@ -34,21 +34,29 @@ namespace AutogenerateFixpack
             if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.fixpackPath))
             {
                 TbFPDir.Text = Properties.Settings.Default.fixpackPath;
-
-                LboxPatches.Items.Clear();
-                if (Directory.Exists(Properties.Settings.Default.fixpackPath))
-                {
-                    foreach (DirectoryInfo directoryInfo in new DirectoryInfo(Properties.Settings.Default.fixpackPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
-                    {
-                        LboxPatches.Items.Add(directoryInfo);
-                        LboxPatches.SelectedItem = directoryInfo;
-                    }
-                }
+                ResetPatchList();
             }
 
             CbScenario.Checked = Properties.Settings.Default.fileScChecked;
             CbRn.Checked = Properties.Settings.Default.releaseNotesChecked;
             CbExcel.Checked = Properties.Settings.Default.excelFileChecked;
+        }
+
+        private void ResetPatchList()
+        {
+            LboxPatches.Items.Clear();
+            if (Directory.Exists(Properties.Settings.Default.fixpackPath))
+            {
+                DirectoryInfo fixpackDir = new DirectoryInfo(Properties.Settings.Default.fixpackPath);
+                List<DirectoryInfo> patchDirectories = fixpackDir.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList();
+                patchDirectories.Sort((x, y) => x.Name.CompareTo(y.Name));
+
+                foreach (DirectoryInfo directoryInfo in patchDirectories)
+                {
+                    LboxPatches.Items.Add(directoryInfo);
+                    LboxPatches.SelectedItem = directoryInfo;
+                }
+            }
         }
 
         delegate bool ScenarioGenerator(DirectoryInfo fixpackDirectory, List<DirectoryInfo> selectedPatches, List<DirectoryInfo> beforeInstructionPatches);
@@ -147,12 +155,7 @@ namespace AutogenerateFixpack
             Properties.Settings.Default.fixpackPath = fbd.SelectedPath;
             Properties.Settings.Default.Save();
 
-            LboxPatches.Items.Clear();
-            foreach(DirectoryInfo directoryInfo in new DirectoryInfo(fbd.SelectedPath).EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
-            {
-                LboxPatches.Items.Add(directoryInfo);
-                LboxPatches.SelectedItem = directoryInfo;
-            }
+            ResetPatchList();
         }
 
         private void BtExcelFile_Click(object sender, EventArgs e)
